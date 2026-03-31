@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+
+<nav class="navbar" th:fragment="navbar">
+    <div class="nav-container">
+        <a th:href="@{/home}" class="nav-brand">
+            <div class="brand-logo">✈️</div>
+            <span class="brand-name">Tour<span>Path</span></span>
+        </a>
+        <div class="nav-menu" id="navMenu">
+            <a th:href="@{/home}"    class="nav-link">Inicio</a>
+            <a th:href="@{/explore}" class="nav-link">Explorar</a>
+            <a th:href="@{/search}"  class="nav-link">Buscar</a>
+            <a th:href="@{/business/register}" class="nav-link">Registra tu negocio</a>
+            <a th:href="@{/nosotros}" class="nav-link">Nosotros</a>
+            <a sec:authorize="hasRole('SUPER_ADMIN')" th:href="@{/superadmin/dashboard}" class="nav-link" style="color:#f97316;">⚙️ Admin</a>
+            <a sec:authorize="hasAnyRole('OWNER') and !hasRole('SUPER_ADMIN')" th:href="@{/owner/dashboard}" class="nav-link" style="color:#0ea5e9;">🏪 Mi establecimiento</a>
+        </div>
+        <div class="nav-auth">
+            <div sec:authorize="isAnonymous()" style="display:flex; gap:10px;">
+                <a th:href="@{/auth/login}"    class="btn btn-outline btn-sm">Iniciar sesión</a>
+                <a th:href="@{/auth/register}" class="btn btn-primary btn-sm">Registrarse</a>
+            </div>
+            <div sec:authorize="isAuthenticated()" class="user-pill">
+                <i class="fas fa-user-circle" style="color:var(--primary);"></i>
+                <span sec:authentication="name">Usuario</span>
+                <i class="fas fa-chevron-down" style="font-size:.7rem; color:var(--gray-400);"></i>
+                <div class="user-dropdown">
+                    <div style="padding:8px 12px; font-size:.82rem; color:var(--gray-400); border-bottom:1px solid var(--gray-200); margin-bottom:8px;" sec:authentication="name">usuario</div>
+                    <a th:href="@{/user/profile}" class="user-dropdown-item"><i class="fas fa-user"></i> Mi perfil</a>
+                    <a sec:authorize="hasAnyRole('OWNER')" th:href="@{/owner/dashboard}" class="user-dropdown-item"><i class="fas fa-store"></i> Mi establecimiento</a>
+                    <a sec:authorize="hasRole('SUPER_ADMIN')" th:href="@{/superadmin/dashboard}" class="user-dropdown-item"><i class="fas fa-shield-alt"></i> Panel Admin</a>
+                    <hr style="border-color:var(--gray-200); margin:8px 0;"/>
+                    <a th:href="@{/auth/logout}" class="user-dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+                </div>
+            </div>
+        </div>
+        <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+    </div>
+</nav>
+
+<footer class="footer" th:fragment="footer">
+    <div class="footer-grid">
+        <div class="footer-brand">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <div class="sidebar-logo">✈️</div>
+                <span style="font-family:'Sora',sans-serif; font-size:1.3rem; font-weight:800; color:white;">Tour<span style="color:#fb923c;">Path</span></span>
+            </div>
+            <p>Descubre el mundo sin límites. Experiencias auténticas en cada ciudad del planeta.</p>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+        <div class="footer-col">
+            <h4>Explorar</h4>
+            <a th:href="@{/explore}">Todas las ciudades</a>
+            <a th:href="@{/search}">Buscar lugares</a>
+            <a th:href="@{/explore(continent='Europa')}">Europa</a>
+            <a th:href="@{/explore(continent='América del Sur')}">América del Sur</a>
+            <a th:href="@{/explore(continent='Asia')}">Asia</a>
+        </div>
+        <div class="footer-col">
+            <h4>Negocios</h4>
+            <a th:href="@{/business/register}">Registra tu establecimiento</a>
+            <a th:href="@{/business/status}">Estado de solicitud</a>
+            <a th:href="@{/owner/dashboard}">Panel de propietario</a>
+        </div>
+        <div class="footer-col">
+            <h4>TourPath</h4>
+            <a th:href="@{/nosotros}">Nosotros</a>
+            <a th:href="@{/contacto}">Contacto</a>
+            <a th:href="@{/auth/register}">Crear cuenta</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 TourPath · Freak Rivero, Jose Bettin, Cristian Cohen · Todos los derechos reservados</p>
+    </div>
+</footer>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

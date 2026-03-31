@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Solicitudes | TourPath Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-wrap"><div class="sidebar-logo">✈️</div><span class="sidebar-brand-name">Tour<span>Path</span></span></div>
+            <div class="sidebar-role">Super Administrador</div>
+        </div>
+        <nav class="sidebar-nav">
+            <a th:href="@{/superadmin/dashboard}" class="sidebar-link"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a th:href="@{/superadmin/requests}" class="sidebar-link active">
+                <i class="fas fa-inbox"></i> Solicitudes
+                <span th:if="${pendingCount > 0}" class="sidebar-badge" th:text="${pendingCount}">0</span>
+            </a>
+            <a th:href="@{/superadmin/cities}"  class="sidebar-link"><i class="fas fa-city"></i> Ciudades</a>
+            <a th:href="@{/superadmin/places}"  class="sidebar-link"><i class="fas fa-map-marker-alt"></i> Lugares</a>
+            <a th:href="@{/superadmin/users}"   class="sidebar-link"><i class="fas fa-users"></i> Usuarios</a>
+            <hr class="sidebar-divider"/>
+            <a th:href="@{/home}" class="sidebar-link"><i class="fas fa-globe"></i> Ver TourPath</a>
+            <a th:href="@{/auth/logout}" class="sidebar-link logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <div class="admin-topbar">
+            <h1 class="admin-page-title">📥 Solicitudes de negocios</h1>
+            <span class="badge badge-pending" style="font-size:.85rem; padding:8px 16px;" th:text="${pendingCount + ' pendientes'}">0 pendientes</span>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success"><i class="fas fa-check-circle"></i> <span th:text="${success}"></span></div>
+
+        <!-- Pendientes primero -->
+        <div class="admin-section" th:if="${!pendingRequests.isEmpty()}">
+            <div class="admin-section-title">⏳ Pendientes de revisión</div>
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead><tr>
+                        <th>Negocio</th><th>Propietario</th><th>Correo</th><th>Ciudad</th><th>Categoría</th><th>Fecha</th><th>Acciones</th>
+                    </tr></thead>
+                    <tbody>
+                        <tr th:each="req : ${pendingRequests}">
+                            <td><strong th:text="${req.businessName}">Nombre</strong></td>
+                            <td th:text="${req.ownerName}">Propietario</td>
+                            <td style="font-size:.82rem;" th:text="${req.ownerEmail}">Email</td>
+                            <td th:text="${req.businessCityName}">Ciudad</td>
+                            <td><span class="badge badge-cat" th:text="${req.businessCategory}">Cat</span></td>
+                            <td th:text="${#temporals.format(req.createdAt,'dd/MM/yyyy')}">Fecha</td>
+                            <td class="actions-cell">
+                                <!-- Ver detalle -->
+                                <a th:href="@{/superadmin/requests/{id}(id=${req.id})}" class="action-btn view" title="Ver detalle completo">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <!-- Aprobar -->
+                                <form th:action="@{/superadmin/requests/{id}/approve(id=${req.id})}" method="post" style="display:inline;"
+                                      onsubmit="return confirm('¿Aprobar esta solicitud? Se creará el lugar y la cuenta del propietario.')">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button type="submit" class="action-btn approve" title="Aprobar solicitud"><i class="fas fa-check"></i></button>
+                                </form>
+                                <!-- Rechazar inline -->
+                                <button type="button" class="action-btn delete" title="Rechazar"
+                                        onclick="showRejectForm(this, '[[${req.id}]]')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Todas las solicitudes -->
+        <div class="admin-section">
+            <div class="admin-section-title">📋 Historial completo</div>
+            <div class="table-search">
+                <input type="text" id="tableSearch" placeholder="Buscar solicitud..."/>
+                <span id="searchCounter" style="font-size:.82rem; color:var(--gray-400);"></span>
+            </div>
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead><tr>
+                        <th>Negocio</th><th>Propietario</th><th>Ciudad</th><th>Estado</th><th>Revisado por</th><th>Fecha</th><th>Acciones</th>
+                    </tr></thead>
+                    <tbody>
+                        <tr th:each="req : ${allRequests}">
+                            <td><strong th:text="${req.businessName}">Nombre</strong></td>
+                            <td th:text="${req.ownerName}">Propietario</td>
+                            <td th:text="${req.businessCityName}">Ciudad</td>
+                            <td>
+                                <span th:if="${req.status.toString() == 'PENDING'}"  class="badge badge-pending">⏳ Pendiente</span>
+                                <span th:if="${req.status.toString() == 'APPROVED'}" class="badge badge-approved">✅ Aprobado</span>
+                                <span th:if="${req.status.toString() == 'REJECTED'}" class="badge badge-rejected">❌ Rechazado</span>
+                            </td>
+                            <td style="font-size:.82rem;" th:text="${req.reviewedBy != null ? req.reviewedBy : '-'}">-</td>
+                            <td th:text="${#temporals.format(req.createdAt,'dd/MM/yyyy')}">Fecha</td>
+                            <td class="actions-cell">
+                                <a th:href="@{/superadmin/requests/{id}(id=${req.id})}" class="action-btn view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal rechazo -->
+        <div id="rejectModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:9999; display:none; align-items:center; justify-content:center;">
+            <div style="background:white; border-radius:var(--radius); padding:32px; max-width:480px; width:90%;">
+                <h3 style="margin-bottom:16px; color:var(--primary-dark);">❌ Rechazar solicitud</h3>
+                <form id="rejectForm" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label>Motivo del rechazo *</label>
+                        <textarea name="reason" class="form-input" rows="4"
+                                  placeholder="Explica por qué se rechaza la solicitud..." required></textarea>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-times-circle"></i> Confirmar rechazo</button>
+                        <button type="button" class="btn btn-outline" onclick="closeRejectModal()">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/main.js}"></script>
+<script>
+function showRejectForm(btn, requestId) {
+    const modal = document.getElementById('rejectModal');
+    document.getElementById('rejectForm').action = '/superadmin/requests/' + requestId + '/reject';
+    modal.style.display = 'flex';
+}
+function closeRejectModal() {
+    document.getElementById('rejectModal').style.display = 'none';
+}
+</script>
+</body>
+</html>

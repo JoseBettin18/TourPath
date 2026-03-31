@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${place.name + ' | TourPath'}">Lugar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<!-- Hero del lugar -->
+<div class="detail-hero">
+    <img th:src="${place.mainImage != null ? place.mainImage : 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1200'}"
+         th:alt="${place.name}"/>
+    <div class="detail-hero-overlay"></div>
+    <div class="container detail-hero-content">
+        <div class="detail-breadcrumb">
+            <a th:href="@{/explore}">Explorar</a> →
+            <a th:href="@{/city/{id}(id=${place.cityId})}" th:text="${place.cityName}">Ciudad</a> →
+            <span th:text="${place.name}">Lugar</span>
+        </div>
+        <div style="display:inline-block; background:rgba(255,255,255,.15); backdrop-filter:blur(8px); border-radius:50px; padding:6px 14px; font-size:.82rem; color:white; margin-bottom:10px;"
+             th:text="${place.category.emoji + ' ' + place.category.displayName}"></div>
+        <h1 class="detail-title" th:text="${place.name}">Nombre</h1>
+        <div class="detail-meta">
+            <div class="detail-meta-item" th:if="${place.cityName}">
+                <i class="fas fa-map-marker-alt"></i>
+                <span th:text="${place.cityName + ', ' + place.countryName}"></span>
+            </div>
+            <div class="detail-meta-item" th:if="${place.totalReviews > 0}">
+                <span style="color:#f59e0b;">★</span>
+                <strong th:text="${#numbers.formatDecimal(place.averageRating,1,1)}">4.5</strong>
+                <span th:text="'(' + ${place.totalReviews} + ' reseñas)'"></span>
+            </div>
+            <div class="detail-meta-item" th:if="${place.priceRange}">
+                <i class="fas fa-tag"></i>
+                <span th:text="${place.priceRange}"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contenido principal -->
+<div class="detail-layout">
+    <main>
+        <!-- Alertas -->
+        <div th:if="${success}" class="alert alert-success">
+            <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+        </div>
+        <div th:if="${reviewError}" class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i> <span th:text="${reviewError}"></span>
+        </div>
+
+        <!-- Descripción -->
+        <div class="detail-card">
+            <h2>Sobre este lugar</h2>
+            <p style="color:var(--gray-600); line-height:1.8;" th:text="${place.description}">Descripción</p>
+            <div class="tags-wrap" th:if="${place.tags != null and !place.tags.isEmpty()}">
+                <span th:each="tag : ${place.tags}" class="tag" th:text="${'#' + tag}"></span>
+            </div>
+        </div>
+
+        <!-- Formulario reseña -->
+        <div class="detail-card" sec:authorize="isAuthenticated()">
+            <h2>⭐ Deja tu reseña</h2>
+            <form th:action="@{/places/{id}/review(id=${place.id})}" th:object="${newReview}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label>Calificación</label>
+                    <div class="star-rating">
+                        <input type="radio" th:field="*{rating}" value="5" id="s5"/><label for="s5">★</label>
+                        <input type="radio" th:field="*{rating}" value="4" id="s4"/><label for="s4">★</label>
+                        <input type="radio" th:field="*{rating}" value="3" id="s3"/><label for="s3">★</label>
+                        <input type="radio" th:field="*{rating}" value="2" id="s2"/><label for="s2">★</label>
+                        <input type="radio" th:field="*{rating}" value="1" id="s1"/><label for="s1">★</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label>Comentario</label>
+                    <textarea th:field="*{comment}" rows="4" class="form-input"
+                              placeholder="Comparte tu experiencia (mínimo 10 caracteres)..."></textarea>
+                    <span th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}" class="field-error"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Publicar reseña
+                </button>
+            </form>
+        </div>
+
+        <div class="detail-card" sec:authorize="isAnonymous()" style="text-align:center; background:var(--gray-50);">
+            <p style="color:var(--gray-600);">🔐 <a th:href="@{/auth/login}" style="color:var(--primary); font-weight:600;">Inicia sesión</a> para dejar una reseña</p>
+        </div>
+
+        <!-- Reseñas -->
+        <div class="detail-card" th:if="${!reviews.isEmpty()}">
+            <h2>Reseñas <span style="font-size:.9rem; font-weight:400; color:var(--gray-400);" th:text="'(' + ${reviews.size()} + ')'"></span></h2>
+            <div th:each="review : ${reviews}" class="review-item">
+                <div class="review-header">
+                    <div class="review-avatar" th:text="${#strings.substring(review.username,0,1).toUpperCase()}">U</div>
+                    <div class="review-meta">
+                        <strong th:text="${review.username}">Usuario</strong>
+                        <span th:text="${#temporals.format(review.createdAt,'dd MMM yyyy')}">Fecha</span>
+                    </div>
+                    <div class="review-stars">
+                        <span th:each="i : ${#numbers.sequence(1, review.rating)}">★</span>
+                    </div>
+                </div>
+                <p class="review-text" th:text="${review.comment}">Comentario</p>
+                <form sec:authorize="hasRole('SUPER_ADMIN')"
+                      th:action="@{/superadmin/reviews/{id}/delete(id=${review.id})}" method="post"
+                      style="display:inline; margin-top:6px;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-sm" style="background:#fee2e2; color:#dc2626; border:none;">
+                        🗑️ Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="detail-card" th:if="${reviews.isEmpty()}" style="text-align:center; color:var(--gray-400);">
+            📝 Aún no hay reseñas. ¡Sé el primero en opinar!
+        </div>
+    </main>
+
+    <!-- Sidebar -->
+    <aside class="detail-sidebar">
+
+        <!-- BOTÓN DE RESERVA -->
+        <div class="booking-card" th:if="${place.bookingUrl != null and !place.bookingUrl.isBlank()}">
+            <h3>📅 ¿Listo para ir?</h3>
+            <p>Reserva tu lugar directamente con el establecimiento sin intermediarios.</p>
+            <a th:href="${place.bookingUrl}" target="_blank" rel="noopener noreferrer" class="btn-book">
+                <i class="fas fa-calendar-check"></i>
+                <span th:text="${place.bookingLabel != null ? place.bookingLabel : 'Reservar ahora'}">Reservar ahora</span>
+                <i class="fas fa-external-link-alt" style="font-size:.8rem; opacity:.7;"></i>
+            </a>
+            <p style="font-size:.75rem; color:rgba(255,255,255,.5); margin-top:10px; margin-bottom:0;">
+                Serás redirigido al sitio del establecimiento
+            </p>
+        </div>
+
+        <!-- Info del lugar -->
+        <div class="detail-card">
+            <h2>Información</h2>
+            <div class="info-row" th:if="${place.address}">
+                <i class="fas fa-map-marker-alt info-row-icon"></i>
+                <div><strong>Dirección</strong><span th:text="${place.address}"></span></div>
+            </div>
+            <div class="info-row" th:if="${place.openingHours}">
+                <i class="fas fa-clock info-row-icon"></i>
+                <div><strong>Horario</strong><span th:text="${place.openingHours}"></span></div>
+            </div>
+            <div class="info-row" th:if="${place.phone}">
+                <i class="fas fa-phone info-row-icon"></i>
+                <div><strong>Teléfono</strong><a th:href="'tel:' + ${place.phone}" th:text="${place.phone}"></a></div>
+            </div>
+            <div class="info-row" th:if="${place.email}">
+                <i class="fas fa-envelope info-row-icon"></i>
+                <div><strong>Email</strong><a th:href="'mailto:' + ${place.email}" th:text="${place.email}"></a></div>
+            </div>
+            <div class="info-row" th:if="${place.website}">
+                <i class="fas fa-globe info-row-icon"></i>
+                <div><strong>Web</strong><a th:href="${place.website}" target="_blank">Visitar sitio</a></div>
+            </div>
+            <div class="info-row" th:if="${place.priceRange}">
+                <i class="fas fa-tag info-row-icon"></i>
+                <div><strong>Precio</strong><span th:text="${place.priceRange}"></span></div>
+            </div>
+            <!-- Mapa -->
+            <div th:if="${place.latitude != null and place.longitude != null}" style="margin-top:16px;">
+                <iframe th:src="'https://maps.google.com/maps?q=' + ${place.latitude} + ',' + ${place.longitude} + '&z=15&output=embed'"
+                        width="100%" height="190" style="border:0; border-radius:10px;" loading="lazy"></iframe>
+            </div>
+        </div>
+
+        <!-- Volver a la ciudad -->
+        <a th:href="@{/city/{id}(id=${place.cityId})}" class="btn btn-outline btn-full" style="margin-top:4px;">
+            <i class="fas fa-arrow-left"></i> Volver a <span th:text="${place.cityName}">Ciudad</span>
+        </a>
+    </aside>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

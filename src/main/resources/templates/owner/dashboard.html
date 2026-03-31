@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Mi establecimiento | TourPath</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-wrap">
+                <div class="sidebar-logo">✈️</div>
+                <span class="sidebar-brand-name">Tour<span>Path</span></span>
+            </div>
+            <div class="sidebar-role">Panel de Propietario</div>
+        </div>
+        <nav class="sidebar-nav">
+            <a th:href="@{/owner/dashboard}" class="sidebar-link active"><i class="fas fa-chart-bar"></i> Mi dashboard</a>
+            <a th:href="@{/owner/place/edit}" class="sidebar-link"><i class="fas fa-edit"></i> Editar mi negocio</a>
+            <hr class="sidebar-divider"/>
+            <a th:href="@{/home}" class="sidebar-link"><i class="fas fa-globe"></i> Ver TourPath</a>
+            <a th:href="@{/auth/logout}" class="sidebar-link logout"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <div class="admin-topbar">
+            <h1 class="admin-page-title">🏪 Mi Establecimiento</h1>
+            <div class="admin-user"><i class="fas fa-store"></i> <span th:text="${owner.fullName}">Owner</span></div>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success"><i class="fas fa-check-circle"></i> <span th:text="${success}"></span></div>
+
+        <!-- Sin establecimiento -->
+        <div th:if="${myPlace == null}" style="background:white; border-radius:var(--radius); padding:48px; text-align:center; box-shadow:var(--shadow);">
+            <div style="font-size:3rem; margin-bottom:16px;">🏗️</div>
+            <h3 style="font-size:1.4rem; color:var(--primary-dark); margin-bottom:8px;">Tu establecimiento está siendo configurado</h3>
+            <p style="color:var(--gray-600); margin-bottom:24px;">El equipo de TourPath está procesando tu solicitud. Te notificaremos pronto.</p>
+            <a th:href="@{/home}" class="btn btn-blue">Volver al inicio</a>
+        </div>
+
+        <!-- Con establecimiento -->
+        <div th:if="${myPlace != null}">
+            <!-- Stats -->
+            <div class="stats-grid" style="margin-bottom:24px;">
+                <div class="stat-card stat-blue">
+                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                    <div>
+                        <span class="stat-value" th:text="${#numbers.formatDecimal(myPlace.averageRating,1,1)}">0.0</span>
+                        <span class="stat-label">Calificación promedio</span>
+                    </div>
+                </div>
+                <div class="stat-card stat-orange">
+                    <div class="stat-icon"><i class="fas fa-comment"></i></div>
+                    <div>
+                        <span class="stat-value" th:text="${myPlace.totalReviews}">0</span>
+                        <span class="stat-label">Reseñas recibidas</span>
+                    </div>
+                </div>
+                <div class="stat-card stat-green">
+                    <div class="stat-icon"><i class="fas fa-eye"></i></div>
+                    <div>
+                        <span class="stat-value" th:text="${myPlace.active ? 'Activo' : 'Inactivo'}">Activo</span>
+                        <span class="stat-label">Estado del perfil</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:24px;">
+                <!-- Vista previa del establecimiento -->
+                <div>
+                    <div class="admin-section">
+                        <div class="admin-section-title">
+                            Vista previa
+                            <a th:href="@{/places/{id}(id=${myPlace.id})}" target="_blank">Ver público →</a>
+                        </div>
+                        <div class="owner-place-card">
+                            <img th:src="${myPlace.mainImage != null ? myPlace.mainImage : 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600'}"
+                                 th:alt="${myPlace.name}" class="owner-place-img"/>
+                            <div class="owner-place-body">
+                                <div style="display:inline-block; background:var(--gray-100); border-radius:50px; padding:4px 12px; font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:10px;"
+                                     th:text="${myPlace.category.emoji + ' ' + myPlace.category.displayName}"></div>
+                                <h3 style="font-size:1.3rem; color:var(--primary-dark); margin-bottom:6px;" th:text="${myPlace.name}">Nombre</h3>
+                                <p style="font-size:.88rem; color:var(--gray-600); line-height:1.6; margin-bottom:16px;"
+                                   th:text="${#strings.abbreviate(myPlace.description, 150)}">Descripción</p>
+                                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+                                    <span th:if="${myPlace.address}" style="font-size:.8rem; color:var(--gray-400);"><i class="fas fa-map-marker-alt"></i> <span th:text="${myPlace.address}"></span></span>
+                                    <span th:if="${myPlace.openingHours}" style="font-size:.8rem; color:var(--gray-400);"><i class="fas fa-clock"></i> <span th:text="${myPlace.openingHours}"></span></span>
+                                </div>
+                                <div th:if="${myPlace.bookingUrl != null and !myPlace.bookingUrl.isBlank()}">
+                                    <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:10px; padding:14px; text-align:center;">
+                                        <p style="font-size:.8rem; color:#9a3412; margin-bottom:8px;">🔗 Tu botón de reserva:</p>
+                                        <a th:href="${myPlace.bookingUrl}" target="_blank" class="btn-book" style="font-size:.9rem; padding:12px 20px;">
+                                            <i class="fas fa-calendar-check"></i>
+                                            <span th:text="${myPlace.bookingLabel != null ? myPlace.bookingLabel : 'Reservar ahora'}">Reservar</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <a th:href="@{/owner/place/edit}" class="btn btn-blue btn-full" style="margin-top:14px;">
+                                    <i class="fas fa-edit"></i> Editar información
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reseñas recientes -->
+                <div>
+                    <div class="admin-section">
+                        <div class="admin-section-title">Últimas reseñas</div>
+                        <div th:if="${reviews.isEmpty()}" style="text-align:center; padding:32px 0; color:var(--gray-400);">
+                            <div style="font-size:2rem; margin-bottom:10px;">📝</div>
+                            <p>Aún no tienes reseñas</p>
+                        </div>
+                        <div th:each="review : ${reviews}" class="review-item">
+                            <div class="review-header">
+                                <div class="review-avatar" th:text="${#strings.substring(review.username,0,1).toUpperCase()}">U</div>
+                                <div class="review-meta">
+                                    <strong th:text="${review.username}">Usuario</strong>
+                                    <span th:text="${#temporals.format(review.createdAt,'dd/MM/yyyy')}">Fecha</span>
+                                </div>
+                                <div class="review-stars" th:text="${'★'.repeat(review.rating)}">★★★★★</div>
+                            </div>
+                            <p class="review-text" th:text="${#strings.abbreviate(review.comment, 100)}">Comentario</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

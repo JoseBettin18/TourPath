@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Solicitud | TourPath Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link rel="stylesheet" th:href="@{/css/main.css}"/>
+<link rel="stylesheet" th:href="@{/css/admin.css}"/></head>
+<body class="admin-body">
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><div class="sidebar-brand-wrap"><div class="sidebar-logo">✈️</div><span class="sidebar-brand-name">Tour<span>Path</span></span></div><div class="sidebar-role">Super Admin</div></div>
+    <nav class="sidebar-nav">
+      <a th:href="@{/superadmin/dashboard}" class="sidebar-link"><i class="fas fa-chart-line"></i> Dashboard</a>
+      <a th:href="@{/superadmin/requests}" class="sidebar-link active"><i class="fas fa-inbox"></i> Solicitudes</a>
+      <a th:href="@{/auth/logout}" class="sidebar-link logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
+    </nav>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title">📋 Detalle de Solicitud</h1>
+      <a th:href="@{/superadmin/requests}" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
+    </div>
+    <div th:if="${success}" class="alert alert-success"><i class="fas fa-check-circle"></i> <span th:text="${success}"></span></div>
+    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:24px;">
+      <div>
+        <div class="admin-section">
+          <div class="admin-section-title">Datos del Establecimiento</div>
+          <div class="request-field"><label>Nombre</label><p th:text="${request.businessName}">-</p></div>
+          <div class="request-field"><label>Categoría</label><p th:text="${request.businessCategory}">-</p></div>
+          <div class="request-field"><label>Descripción</label><p th:text="${request.businessDescription}">-</p></div>
+          <div class="request-field"><label>Ciudad</label><p th:text="${request.businessCityName + ', ' + request.businessCountry}">-</p></div>
+          <div class="request-field"><label>Dirección</label><p th:text="${request.businessAddress}">-</p></div>
+          <div class="request-field"><label>Teléfono</label><p th:text="${request.businessPhone}">-</p></div>
+          <div class="request-field"><label>Email</label><p th:text="${request.businessEmail}">-</p></div>
+          <div class="request-field"><label>Sitio web</label><a th:href="${request.businessWebsite}" target="_blank" th:text="${request.businessWebsite}">-</a></div>
+          <div class="request-field"><label>Horario</label><p th:text="${request.openingHours}">-</p></div>
+          <div class="request-field" th:if="${request.businessBookingUrl}">
+            <label>Link de reservas</label>
+            <p><a th:href="${request.businessBookingUrl}" target="_blank" th:text="${request.businessBookingUrl}">-</a><br/>
+            <em style="font-size:.82rem;color:var(--gray-400);">Botón: <span th:text="${request.businessBookingLabel}">Reservar</span></em></p>
+          </div>
+          <div th:if="${request.businessImage}">
+            <label style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-400);display:block;margin-bottom:8px;">Imagen</label>
+            <img th:src="${request.businessImage}" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;"/>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="admin-section">
+          <div class="admin-section-title">Propietario</div>
+          <div class="request-field"><label>Nombre</label><p th:text="${request.ownerName}">-</p></div>
+          <div class="request-field"><label>Correo</label><a th:href="'mailto:' + ${request.ownerEmail}" th:text="${request.ownerEmail}">-</a></div>
+          <div class="request-field"><label>Teléfono</label><p th:text="${request.ownerPhone}">-</p></div>
+          <div class="request-field"><label>Fecha solicitud</label><p th:text="${#temporals.format(request.createdAt,'dd/MM/yyyy HH:mm')}">-</p></div>
+          <div class="request-field"><label>Estado</label>
+            <span th:if="${request.status.toString() == 'PENDING'}" class="badge badge-pending">⏳ Pendiente</span>
+            <span th:if="${request.status.toString() == 'APPROVED'}" class="badge badge-approved">✅ Aprobado</span>
+            <span th:if="${request.status.toString() == 'REJECTED'}" class="badge badge-rejected">❌ Rechazado</span>
+          </div>
+          <div th:if="${request.rejectionReason}" class="request-field">
+            <label>Motivo de rechazo</label><p th:text="${request.rejectionReason}">-</p>
+          </div>
+        </div>
+        <div class="admin-section" th:if="${request.status.toString() == 'PENDING'}">
+          <div class="admin-section-title">Acciones</div>
+          <form th:action="@{/superadmin/requests/{id}/approve(id=${request.id})}" method="post" style="margin-bottom:12px;" onsubmit="return confirm('Aprobar esta solicitud? Se creara el establecimiento y la cuenta del propietario.')">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-check-circle"></i> Aprobar solicitud</button>
+          </form>
+          <form th:action="@{/superadmin/requests/{id}/reject(id=${request.id})}" method="post" id="rejectFrm">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <div class="form-group" style="margin-bottom:12px;"><label>Motivo del rechazo</label><textarea name="reason" class="form-input" rows="3" required placeholder="Explica por que se rechaza..."></textarea></div>
+            <button type="submit" class="btn btn-full" style="background:#fee2e2;color:#dc2626;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;"><i class="fas fa-times-circle"></i> Rechazar solicitud</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script th:src="@{/js/main.js}"></script>
+</body></html>

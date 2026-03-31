@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard Super Admin | TourPath</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-wrap"><div class="sidebar-logo">✈️</div><span class="sidebar-brand-name">Tour<span>Path</span></span></div>
+            <div class="sidebar-role">Super Administrador</div>
+        </div>
+        <nav class="sidebar-nav">
+            <a th:href="@{/superadmin/dashboard}" class="sidebar-link active"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a th:href="@{/superadmin/requests}" class="sidebar-link">
+                <i class="fas fa-inbox"></i> Solicitudes
+                <span th:if="${pendingRequests > 0}" class="sidebar-badge" th:text="${pendingRequests}">0</span>
+            </a>
+            <a th:href="@{/superadmin/cities}"  class="sidebar-link"><i class="fas fa-city"></i> Ciudades</a>
+            <a th:href="@{/superadmin/places}"  class="sidebar-link"><i class="fas fa-map-marker-alt"></i> Lugares</a>
+            <a th:href="@{/superadmin/users}"   class="sidebar-link"><i class="fas fa-users"></i> Usuarios</a>
+            <hr class="sidebar-divider"/>
+            <a th:href="@{/home}" class="sidebar-link"><i class="fas fa-globe"></i> Ver TourPath</a>
+            <a th:href="@{/auth/logout}" class="sidebar-link logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <div class="admin-topbar">
+            <h1 class="admin-page-title">📊 Dashboard</h1>
+            <div class="admin-user"><i class="fas fa-shield-alt" style="color:#f97316;"></i> <span sec:authentication="name">Admin</span></div>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success"><i class="fas fa-check-circle"></i> <span th:text="${success}"></span></div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card stat-blue">
+                <div class="stat-icon"><i class="fas fa-city"></i></div>
+                <div><span class="stat-value" th:text="${totalCities}">0</span><span class="stat-label">Ciudades</span></div>
+            </div>
+            <div class="stat-card stat-orange">
+                <div class="stat-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <div><span class="stat-value" th:text="${totalPlaces}">0</span><span class="stat-label">Lugares activos</span></div>
+            </div>
+            <div class="stat-card stat-green">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div><span class="stat-value" th:text="${totalUsers}">0</span><span class="stat-label">Usuarios</span></div>
+            </div>
+            <div class="stat-card" th:classappend="${pendingRequests > 0} ? 'stat-red' : 'stat-teal'">
+                <div class="stat-icon"><i class="fas fa-inbox"></i></div>
+                <div><span class="stat-value" th:text="${pendingRequests}">0</span><span class="stat-label">Solicitudes pendientes</span></div>
+            </div>
+            <div class="stat-card stat-teal">
+                <div class="stat-icon"><i class="fas fa-star"></i></div>
+                <div><span class="stat-value" th:text="${featuredPlaces}">0</span><span class="stat-label">Lugares destacados</span></div>
+            </div>
+        </div>
+
+        <!-- Solicitudes pendientes -->
+        <div class="admin-section" th:if="${!recentRequests.isEmpty()}">
+            <div class="admin-section-title">
+                ⏳ Solicitudes pendientes
+                <a th:href="@{/superadmin/requests}">Ver todas →</a>
+            </div>
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead><tr>
+                        <th>Negocio</th><th>Propietario</th><th>Ciudad</th><th>Categoría</th><th>Fecha</th><th>Acciones</th>
+                    </tr></thead>
+                    <tbody>
+                        <tr th:each="req : ${recentRequests}">
+                            <td><strong th:text="${req.businessName}">Nombre</strong></td>
+                            <td th:text="${req.ownerName}">Propietario</td>
+                            <td th:text="${req.businessCityName}">Ciudad</td>
+                            <td><span class="badge badge-cat" th:text="${req.businessCategory}">Cat</span></td>
+                            <td th:text="${#temporals.format(req.createdAt,'dd/MM/yy')}">Fecha</td>
+                            <td class="actions-cell">
+                                <a th:href="@{/superadmin/requests/{id}(id=${req.id})}" class="action-btn view" title="Ver detalle">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <form th:action="@{/superadmin/requests/{id}/approve(id=${req.id})}" method="post" style="display:inline;">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button type="submit" class="action-btn approve" title="Aprobar"><i class="fas fa-check"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Stats por categoría -->
+        <div class="admin-section">
+            <div class="admin-section-title">Distribución por categoría</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <div th:each="entry : ${statsByCategory}" style="display:flex; align-items:center; gap:12px;">
+                    <span style="font-size:.85rem; color:var(--gray-600); min-width:180px;" th:text="${entry.key}"></span>
+                    <div style="flex:1; height:10px; background:var(--gray-200); border-radius:50px; overflow:hidden;">
+                        <div style="height:100%; background:linear-gradient(90deg,var(--primary),var(--teal)); border-radius:50px;"
+                             th:style="'width:' + (${entry.value} * 100 / (${totalPlaces} > 0 ? ${totalPlaces} : 1)) + '%'"></div>
+                    </div>
+                    <span style="font-size:.85rem; font-weight:700; color:var(--primary); min-width:24px;" th:text="${entry.value}">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Últimos lugares -->
+        <div class="admin-section">
+            <div class="admin-section-title">Últimos lugares
+                <a th:href="@{/superadmin/places}">Ver todos →</a>
+            </div>
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead><tr><th>Nombre</th><th>Ciudad</th><th>Categoría</th><th>Rating</th><th>Estado</th></tr></thead>
+                    <tbody>
+                        <tr th:each="p : ${recentPlaces}">
+                            <td><strong th:text="${p.name}">Nombre</strong></td>
+                            <td th:text="${p.cityName}">Ciudad</td>
+                            <td><span class="badge badge-cat" th:text="${p.category.emoji + ' ' + p.category.displayName}"></span></td>
+                            <td><span style="color:#f59e0b;">★</span> <span th:text="${#numbers.formatDecimal(p.averageRating,1,1)}">0.0</span></td>
+                            <td><span th:classappend="${p.active} ? 'badge-active' : 'badge-inactive'" class="badge" th:text="${p.active ? 'Activo' : 'Inactivo'}"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
