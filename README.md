@@ -3,7 +3,7 @@
 > Plataforma internacional de descubrimiento turístico. Selecciona tu ciudad,
 > explora lugares únicos, reserva directamente y apoya a los negocios locales.
 
-**Integrantes:** Freak Rivero · Jose Bettin · Cristian Cohen — 2026
+**Integrantes:** Freck Rivero · Jose Bettin · Cristian Cohen — 2026
 
 ---
 
