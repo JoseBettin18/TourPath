@@ -26,16 +26,51 @@ public class RegisterDTO {
     @NotBlank(message = "Confirma tu contraseña")
     private String confirmPassword;
 
-    public String getFullName()               { return fullName; }
-    public void   setFullName(String v)       { this.fullName = v; }
-    public String getUsername()               { return username; }
-    public void   setUsername(String v)       { this.username = v; }
-    public String getEmail()                  { return email; }
-    public void   setEmail(String v)          { this.email = v; }
-    public String getPhone()                  { return phone; }
-    public void   setPhone(String v)          { this.phone = v; }
-    public String getPassword()               { return password; }
-    public void   setPassword(String v)       { this.password = v; }
-    public String getConfirmPassword()        { return confirmPassword; }
-    public void   setConfirmPassword(String v){ this.confirmPassword = v; }
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String v) {
+        this.fullName = v;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String v) {
+        this.username = v;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String v) {
+        this.email = v;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String v) {
+        this.phone = v;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String v) {
+        this.password = v;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String v) {
+        this.confirmPassword = v;
+    }
 }

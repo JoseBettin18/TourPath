@@ -1,36 +1,60 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Nosotros | TourPath</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-<link rel="stylesheet" th:href="@{/css/main.css}"/></head>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nosotros | TourPath</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+
 <body>
-<div th:replace="~{fragments/layout :: navbar}"></div>
-<div style="background:linear-gradient(135deg,#0f2540,#1a3c5e);color:white;text-align:center;padding:80px 24px;">
-  <h1 style="font-size:clamp(2rem,5vw,3.5rem);margin-bottom:14px;">Hacemos visible lo <em style="color:#fb923c;font-style:normal;">extraordinario</em></h1>
-  <p style="color:rgba(255,255,255,.75);font-size:1.1rem;max-width:600px;margin:0 auto;">TourPath conecta viajeros del mundo con experiencias auténticas y apoya a los negocios locales.</p>
-</div>
-<section class="section"><div class="container" style="max-width:900px;">
-  <div class="section-header"><span class="section-badge">El equipo</span><h2 class="section-title">Quiénes somos</h2></div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
-    <div style="background:white;border-radius:var(--radius);padding:32px 24px;text-align:center;box-shadow:var(--shadow);">
-      <div style="width:80px;height:80px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;margin:0 auto 16px;font-family:'Sora',sans-serif;">F</div>
-      <h3 style="font-size:1.1rem;color:var(--primary-dark);margin-bottom:4px;">Freak Rivero</h3>
-      <p style="font-size:.82rem;color:var(--gray-400);">Backend · Spring Boot · Arquitectura</p>
-    </div>
-    <div style="background:white;border-radius:var(--radius);padding:32px 24px;text-align:center;box-shadow:var(--shadow);">
-      <div style="width:80px;height:80px;background:linear-gradient(135deg,#f97316,#ea6a00);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;margin:0 auto 16px;font-family:'Sora',sans-serif;">J</div>
-      <h3 style="font-size:1.1rem;color:var(--primary-dark);margin-bottom:4px;">Jose Bettin</h3>
-      <p style="font-size:.82rem;color:var(--gray-400);">Frontend · UI/UX · Thymeleaf</p>
-    </div>
-    <div style="background:white;border-radius:var(--radius);padding:32px 24px;text-align:center;box-shadow:var(--shadow);">
-      <div style="width:80px;height:80px;background:linear-gradient(135deg,#0ea5e9,#0369a1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;margin:0 auto 16px;font-family:'Sora',sans-serif;">C</div>
-      <h3 style="font-size:1.1rem;color:var(--primary-dark);margin-bottom:4px;">Cristian Cohen</h3>
-      <p style="font-size:.82rem;color:var(--gray-400);">Base de datos · MongoDB · Seguridad</p>
-    </div>
+  <div th:replace="~{fragments/layout :: navbar}"></div>
+  <div style="background:linear-gradient(135deg,#0f2540,#1a3c5e);color:white;text-align:center;padding:80px 24px;">
+    <h1 style="font-size:clamp(2rem,5vw,3.5rem);margin-bottom:14px;">Hacemos visible lo <em
+        style="color:#fb923c;font-style:normal;">extraordinario</em></h1>
+    <p style="color:rgba(255,255,255,.75);font-size:1.1rem;max-width:600px;margin:0 auto;">TourPath conecta viajeros del
+      mundo con experiencias auténticas y apoya a los negocios locales.</p>
   </div>
-</div></section>
-<div th:replace="~{fragments/layout :: footer}"></div>
-<script th:src="@{/js/main.js}"></script>
-</body></html>
+  <section class="section">
+    <div class="container" style="max-width:900px;">
+      <div class="section-header"><span class="section-badge">El equipo</span>
+        <h2 class="section-title">Quiénes somos</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+        <div
+          style="background:white;border-radius:var(--radius);padding:32px 24px;text-align:center;box-shadow:var(--shadow);">
+          <div
+            style="width:80px;height:80px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;margin:0 auto 16px;font-family:'Sora',sans-serif;">
+            F</div>
+          <h3 style="font-size:1.1rem;color:var(--primary-dark);margin-bottom:4px;">Freak Rivero</h3>
+          <p style="font-size:.82rem;color:var(--gray-400);">Backend · Spring Boot · Arquitectura</p>
+        </div>
+        <div
+          style="background:white;border-radius:var(--radius);padding:32px 24px;text-align:center;box-shadow:var(--shadow);">
+          <div
+            style="width:80px;height:80px;background:linear-gradient(135deg,#f97316,#ea6a00);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;margin:0 auto 16px;font-family:'Sora',sans-serif;">
+            J</div>
+          <h3 style="font-size:1.1rem;color:var(--primary-dark);margin-bottom:4px;">Jose Bettin</h3>
+          <p style="font-size:.82rem;color:var(--gray-400);">Frontend · UI/UX · Thymeleaf</p>
+        </div>
+        <div
+          style="background:white;border-radius:var(--radius);padding:32px 24px;text-align:center;box-shadow:var(--shadow);">
+          <div
+            style="width:80px;height:80px;background:linear-gradient(135deg,#0ea5e9,#0369a1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;margin:0 auto 16px;font-family:'Sora',sans-serif;">
+            C</div>
+          <h3 style="font-size:1.1rem;color:var(--primary-dark);margin-bottom:4px;">Cristian Cohen</h3>
+          <p style="font-size:.82rem;color:var(--gray-400);">Base de datos · MongoDB · Seguridad</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div th:replace="~{fragments/layout :: footer}"></div>
+  <script th:src="@{/js/main.js}"></script>
+</body>
+
+</html>

@@ -22,25 +22,31 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired private AuthenticationManager authenticationManager;
-    @Autowired private CustomUserDetailsService userDetailsService;
-    @Autowired private JwtUtil jwtUtil;
-    @Autowired private UserService userService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+    @Autowired
+    private JwtUtil jwtUtil;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/login")
     public String loginPage(@RequestParam(required = false) String error,
-                            @RequestParam(required = false) String logout,
-                            Model model) {
-        if (error   != null) model.addAttribute("error", "Credenciales incorrectas.");
-        if (logout  != null) model.addAttribute("message", "Sesión cerrada correctamente.");
+            @RequestParam(required = false) String logout,
+            Model model) {
+        if (error != null)
+            model.addAttribute("error", "Credenciales incorrectas.");
+        if (logout != null)
+            model.addAttribute("message", "Sesión cerrada correctamente.");
         return "auth/login";
     }
 
     @PostMapping("/login")
     public String login(@RequestParam String username,
-                        @RequestParam String password,
-                        HttpServletResponse response,
-                        RedirectAttributes ra) {
+            @RequestParam String password,
+            HttpServletResponse response,
+            RedirectAttributes ra) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password));
@@ -58,8 +64,10 @@ public class AuthController {
             boolean isOwner = ud.getAuthorities().stream()
                     .anyMatch(a -> a.getAuthority().equals("ROLE_OWNER"));
 
-            if (isSuperAdmin) return "redirect:/superadmin/dashboard";
-            if (isOwner)      return "redirect:/owner/dashboard";
+            if (isSuperAdmin)
+                return "redirect:/superadmin/dashboard";
+            if (isOwner)
+                return "redirect:/owner/dashboard";
             return "redirect:/home";
         } catch (BadCredentialsException e) {
             ra.addFlashAttribute("error", "Credenciales incorrectas.");
@@ -75,10 +83,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("registerDTO") RegisterDTO dto,
-                           BindingResult result,
-                           RedirectAttributes ra,
-                           Model model) {
-        if (result.hasErrors()) return "auth/register";
+            BindingResult result,
+            RedirectAttributes ra,
+            Model model) {
+        if (result.hasErrors())
+            return "auth/register";
         if (!dto.getPassword().equals(dto.getConfirmPassword())) {
             model.addAttribute("error", "Las contraseñas no coinciden.");
             return "auth/register";

@@ -18,8 +18,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/places")
 public class PlaceController {
 
-    @Autowired private PlaceService placeService;
-    @Autowired private ReviewService reviewService;
+    @Autowired
+    private PlaceService placeService;
+    @Autowired
+    private ReviewService reviewService;
 
     @GetMapping("/{id}")
     public String placeDetail(@PathVariable String id, Model model) {
@@ -36,10 +38,10 @@ public class PlaceController {
     @PostMapping("/{id}/review")
     @PreAuthorize("isAuthenticated()")
     public String addReview(@PathVariable String id,
-                            @Valid @ModelAttribute("newReview") Review review,
-                            BindingResult result,
-                            Authentication auth,
-                            RedirectAttributes ra) {
+            @Valid @ModelAttribute("newReview") Review review,
+            BindingResult result,
+            Authentication auth,
+            RedirectAttributes ra) {
         if (result.hasErrors()) {
             ra.addFlashAttribute("reviewError", "Verifica los campos de la reseña.");
             return "redirect:/places/" + id;

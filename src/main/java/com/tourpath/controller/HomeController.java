@@ -14,10 +14,12 @@ import java.util.List;
 @Controller
 public class HomeController {
 
-    @Autowired private CityService cityService;
-    @Autowired private PlaceService placeService;
+    @Autowired
+    private CityService cityService;
+    @Autowired
+    private PlaceService placeService;
 
-    @GetMapping({"/", "/home"})
+    @GetMapping({ "/", "/home" })
     public String home(Model model) {
         model.addAttribute("featuredCities", cityService.getFeaturedCities());
         model.addAttribute("featuredPlaces", placeService.getFeaturedPlaces().stream().limit(6).toList());
@@ -28,9 +30,9 @@ public class HomeController {
 
     @GetMapping("/explore")
     public String explore(@RequestParam(required = false) String continent,
-                          @RequestParam(required = false) String country,
-                          @RequestParam(required = false) String q,
-                          Model model) {
+            @RequestParam(required = false) String country,
+            @RequestParam(required = false) String q,
+            Model model) {
         List<City> cities;
         if (q != null && !q.isBlank()) {
             cities = cityService.searchCities(q);
@@ -50,8 +52,8 @@ public class HomeController {
 
     @GetMapping("/search")
     public String search(@RequestParam(required = false) String q,
-                         @RequestParam(required = false) String category,
-                         Model model) {
+            @RequestParam(required = false) String category,
+            Model model) {
         List<Place> places;
         if (q != null && !q.isBlank()) {
             places = placeService.searchPlaces(q);
@@ -74,8 +76,12 @@ public class HomeController {
     }
 
     @GetMapping("/nosotros")
-    public String about() { return "nosotros"; }
+    public String about() {
+        return "nosotros";
+    }
 
     @GetMapping("/contacto")
-    public String contact() { return "contacto"; }
+    public String contact() {
+        return "contacto";
+    }
 }

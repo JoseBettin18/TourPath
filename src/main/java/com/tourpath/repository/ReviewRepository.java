@@ -10,13 +10,16 @@ import java.util.Optional;
 @Repository
 public interface ReviewRepository extends MongoRepository<Review, String> {
     List<Review> findByPlaceIdAndActiveTrueOrderByCreatedAtDesc(String placeId);
+
     List<Review> findByUserId(String userId);
+
     Optional<Review> findByPlaceIdAndUserId(String placeId, String userId);
+
     long countByPlaceId(String placeId);
 
     @Aggregation(pipeline = {
-        "{ $match: { placeId: ?0, active: true } }",
-        "{ $group: { _id: null, avgRating: { $avg: '$rating' } } }"
+            "{ $match: { placeId: ?0, active: true } }",
+            "{ $group: { _id: null, avgRating: { $avg: '$rating' } } }"
     })
     Double calculateAverageRating(String placeId);
 }

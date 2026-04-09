@@ -10,10 +10,15 @@ import java.util.Optional;
 @Repository
 public interface CityRepository extends MongoRepository<City, String> {
     List<City> findByActiveTrueOrderByFeaturedDescNameAsc();
+
     List<City> findByFeaturedTrueAndActiveTrue();
+
     Optional<City> findByNameIgnoreCase(String name);
+
     @Query("{ 'name': { $regex: ?0, $options: 'i' }, 'active': true }")
     List<City> searchByName(String query);
+
     List<City> findByCountryIgnoreCaseAndActiveTrue(String country);
+
     List<City> findByContinentAndActiveTrue(String continent);
 }

@@ -1,25 +1,44 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Contacto | TourPath</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-<link rel="stylesheet" th:href="@{/css/main.css}"/></head>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contacto | TourPath</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+
 <body>
-<div th:replace="~{fragments/layout :: navbar}"></div>
-<div class="page-header"><div class="container"><h1>Contacto</h1><p>Escríbenos para registrar tu negocio o resolver dudas.</p></div></div>
-<section class="section"><div class="container" style="max-width:560px;">
-  <div style="background:white;border-radius:var(--radius);padding:36px;box-shadow:var(--shadow);">
-    <div id="sent" style="display:none;text-align:center;padding:24px 0;"><div style="font-size:2.5rem;margin-bottom:12px;">✅</div><h3>Mensaje enviado</h3></div>
-    <form id="cf" style="display:flex;flex-direction:column;gap:16px;" onsubmit="sendContact(event)">
-      <div class="form-group"><label>Nombre</label><input type="text" class="form-input" required/></div>
-      <div class="form-group"><label>Correo</label><input type="email" class="form-input" required/></div>
-      <div class="form-group"><label>Mensaje</label><textarea class="form-input" rows="5" required></textarea></div>
-      <button type="submit" class="btn btn-primary btn-lg">Enviar</button>
-    </form>
+  <div th:replace="~{fragments/layout :: navbar}"></div>
+  <div class="page-header">
+    <div class="container">
+      <h1>Contacto</h1>
+      <p>Escríbenos para registrar tu negocio o resolver dudas.</p>
+    </div>
   </div>
-</div></section>
-<div th:replace="~{fragments/layout :: footer}"></div>
-<script th:src="@{/js/main.js}"></script>
-<script>function sendContact(e){e.preventDefault();document.getElementById('cf').style.display='none';document.getElementById('sent').style.display='block';}</script>
-</body></html>
+  <section class="section">
+    <div class="container" style="max-width:560px;">
+      <div style="background:white;border-radius:var(--radius);padding:36px;box-shadow:var(--shadow);">
+        <div id="sent" style="display:none;text-align:center;padding:24px 0;">
+          <div style="font-size:2.5rem;margin-bottom:12px;">✅</div>
+          <h3>Mensaje enviado</h3>
+        </div>
+        <form id="cf" style="display:flex;flex-direction:column;gap:16px;" onsubmit="sendContact(event)">
+          <div class="form-group"><label>Nombre</label><input type="text" class="form-input" required /></div>
+          <div class="form-group"><label>Correo</label><input type="email" class="form-input" required /></div>
+          <div class="form-group"><label>Mensaje</label><textarea class="form-input" rows="5" required></textarea></div>
+          <button type="submit" class="btn btn-primary btn-lg">Enviar</button>
+        </form>
+      </div>
+    </div>
+  </section>
+  <div th:replace="~{fragments/layout :: footer}"></div>
+  <script th:src="@{/js/main.js}"></script>
+  <script>function sendContact(e) { e.preventDefault(); document.getElementById('cf').style.display = 'none'; document.getElementById('sent').style.display = 'block'; }</script>
+</body>
+
+</html>

@@ -8,7 +8,10 @@ import java.util.List;
 @Repository
 public interface BusinessRequestRepository extends MongoRepository<BusinessRequest, String> {
     List<BusinessRequest> findByStatusOrderByCreatedAtDesc(BusinessRequest.Status status);
+
     List<BusinessRequest> findAllByOrderByCreatedAtDesc();
+
     List<BusinessRequest> findByRequestingUserId(String userId);
+
     long countByStatus(BusinessRequest.Status status);
 }

@@ -20,16 +20,51 @@ public class UserProfileDTO {
     private String confirmNewPassword;
     private String currentPassword;
 
-    public String getFullName()                  { return fullName; }
-    public void   setFullName(String v)          { this.fullName = v; }
-    public String getEmail()                     { return email; }
-    public void   setEmail(String v)             { this.email = v; }
-    public String getPhone()                     { return phone; }
-    public void   setPhone(String v)             { this.phone = v; }
-    public String getNewPassword()               { return newPassword; }
-    public void   setNewPassword(String v)       { this.newPassword = v; }
-    public String getConfirmNewPassword()        { return confirmNewPassword; }
-    public void   setConfirmNewPassword(String v){ this.confirmNewPassword = v; }
-    public String getCurrentPassword()           { return currentPassword; }
-    public void   setCurrentPassword(String v)   { this.currentPassword = v; }
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String v) {
+        this.fullName = v;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String v) {
+        this.email = v;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String v) {
+        this.phone = v;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String v) {
+        this.newPassword = v;
+    }
+
+    public String getConfirmNewPassword() {
+        return confirmNewPassword;
+    }
+
+    public void setConfirmNewPassword(String v) {
+        this.confirmNewPassword = v;
+    }
+
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
+
+    public void setCurrentPassword(String v) {
+        this.currentPassword = v;
+    }
 }

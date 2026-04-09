@@ -1,72 +1,89 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Explorar ciudades | TourPath</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
+
 <body>
-<div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
 
-<div class="page-header">
-    <div class="container">
-        <h1>🌍 Explorar ciudades</h1>
-        <p>Selecciona tu próximo destino y descubre todo lo que ofrece</p>
-        <form th:action="@{/explore}" method="get" style="margin-top:24px;">
-            <div class="city-search" style="max-width:500px;">
-                <i class="fas fa-search" style="color:var(--gray-400);"></i>
-                <input type="text" name="q" th:value="${query}" placeholder="Busca una ciudad o país..." autocomplete="off"/>
-                <button type="submit" class="city-search-btn"><i class="fas fa-search"></i> Buscar</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<section class="section">
-    <div class="container">
-        <!-- Filtros por continente -->
-        <div class="filter-bar">
-            <a th:href="@{/explore}" th:classappend="${selectedContinent == null and selectedCountry == null and query == null} ? ' active' : ''" class="filter-chip">🌐 Todos</a>
-            <a th:href="@{/explore(continent='Europa')}"          th:classappend="${selectedContinent == 'Europa'} ? ' active' : ''"          class="filter-chip">🇪🇺 Europa</a>
-            <a th:href="@{/explore(continent='América del Sur')}" th:classappend="${selectedContinent == 'América del Sur'} ? ' active' : ''" class="filter-chip">🌎 América del Sur</a>
-            <a th:href="@{/explore(continent='América del Norte')}" th:classappend="${selectedContinent == 'América del Norte'} ? ' active' : ''" class="filter-chip">🗽 América del Norte</a>
-            <a th:href="@{/explore(continent='Asia')}"            th:classappend="${selectedContinent == 'Asia'} ? ' active' : ''"            class="filter-chip">🌏 Asia</a>
-            <a th:href="@{/explore(continent='África')}"          th:classappend="${selectedContinent == 'África'} ? ' active' : ''"          class="filter-chip">🌍 África</a>
-        </div>
-
-        <!-- Resultados -->
-        <div th:if="${query != null}" style="margin-bottom:20px; font-size:.95rem; color:var(--gray-600);">
-            <strong th:text="${cities.size()}">0</strong> resultado(s) para "<span th:text="${query}"></span>"
-        </div>
-
-        <div th:if="${cities.isEmpty()}" class="empty-state">
-            <div class="empty-icon">🏙️</div>
-            <h3>No encontramos ciudades</h3>
-            <p>Intenta con otra búsqueda o explora todos los destinos</p>
-            <a th:href="@{/explore}" class="btn btn-blue">Ver todas las ciudades</a>
-        </div>
-
-        <div th:unless="${cities.isEmpty()}" class="cities-grid">
-            <a th:each="city : ${cities}" th:href="@{/city/{id}(id=${city.id})}" class="city-card">
-                <img th:src="${city.mainImage}" th:alt="${city.name}" class="city-card-image" loading="lazy"/>
-                <div class="city-card-overlay"></div>
-                <span th:if="${city.featured}" class="city-card-featured">⭐ Destacado</span>
-                <span th:if="${city.totalPlaces > 0}" class="city-card-places"
-                      th:text="${city.totalPlaces + ' lugares'}"></span>
-                <div class="city-card-body">
-                    <div class="city-card-flag" th:text="${city.flagEmoji}">🌍</div>
-                    <div class="city-card-name" th:text="${city.name}">Ciudad</div>
-                    <div class="city-card-country" th:text="${city.country + ' · ' + city.continent}">País</div>
+    <div class="page-header">
+        <div class="container">
+            <h1>🌍 Explorar ciudades</h1>
+            <p>Selecciona tu próximo destino y descubre todo lo que ofrece</p>
+            <form th:action="@{/explore}" method="get" style="margin-top:24px;">
+                <div class="city-search" style="max-width:500px;">
+                    <i class="fas fa-search" style="color:var(--gray-400);"></i>
+                    <input type="text" name="q" th:value="${query}" placeholder="Busca una ciudad o país..."
+                        autocomplete="off" />
+                    <button type="submit" class="city-search-btn"><i class="fas fa-search"></i> Buscar</button>
                 </div>
-            </a>
+            </form>
         </div>
     </div>
-</section>
 
-<div th:replace="~{fragments/layout :: footer}"></div>
-<script th:src="@{/js/main.js}"></script>
+    <section class="section">
+        <div class="container">
+            <!-- Filtros por continente -->
+            <div class="filter-bar">
+                <a th:href="@{/explore}"
+                    th:classappend="${selectedContinent == null and selectedCountry == null and query == null} ? ' active' : ''"
+                    class="filter-chip">🌐 Todos</a>
+                <a th:href="@{/explore(continent='Europa')}"
+                    th:classappend="${selectedContinent == 'Europa'} ? ' active' : ''" class="filter-chip">🇪🇺
+                    Europa</a>
+                <a th:href="@{/explore(continent='América del Sur')}"
+                    th:classappend="${selectedContinent == 'América del Sur'} ? ' active' : ''" class="filter-chip">🌎
+                    América del Sur</a>
+                <a th:href="@{/explore(continent='América del Norte')}"
+                    th:classappend="${selectedContinent == 'América del Norte'} ? ' active' : ''" class="filter-chip">🗽
+                    América del Norte</a>
+                <a th:href="@{/explore(continent='Asia')}"
+                    th:classappend="${selectedContinent == 'Asia'} ? ' active' : ''" class="filter-chip">🌏 Asia</a>
+                <a th:href="@{/explore(continent='África')}"
+                    th:classappend="${selectedContinent == 'África'} ? ' active' : ''" class="filter-chip">🌍 África</a>
+            </div>
+
+            <!-- Resultados -->
+            <div th:if="${query != null}" style="margin-bottom:20px; font-size:.95rem; color:var(--gray-600);">
+                <strong th:text="${cities.size()}">0</strong> resultado(s) para "<span th:text="${query}"></span>"
+            </div>
+
+            <div th:if="${cities.isEmpty()}" class="empty-state">
+                <div class="empty-icon">🏙️</div>
+                <h3>No encontramos ciudades</h3>
+                <p>Intenta con otra búsqueda o explora todos los destinos</p>
+                <a th:href="@{/explore}" class="btn btn-blue">Ver todas las ciudades</a>
+            </div>
+
+            <div th:unless="${cities.isEmpty()}" class="cities-grid">
+                <a th:each="city : ${cities}" th:href="@{/city/{id}(id=${city.id})}" class="city-card">
+                    <img th:src="${city.mainImage}" th:alt="${city.name}" class="city-card-image" loading="lazy" />
+                    <div class="city-card-overlay"></div>
+                    <span th:if="${city.featured}" class="city-card-featured">⭐ Destacado</span>
+                    <span th:if="${city.totalPlaces > 0}" class="city-card-places"
+                        th:text="${city.totalPlaces + ' lugares'}"></span>
+                    <div class="city-card-body">
+                        <div class="city-card-flag" th:text="${city.flagEmoji}">🌍</div>
+                        <div class="city-card-name" th:text="${city.name}">Ciudad</div>
+                        <div class="city-card-country" th:text="${city.country + ' · ' + city.continent}">País</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <script th:src="@{/js/main.js}"></script>
 </body>
+
 </html>

@@ -1,187 +1,208 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TourPath — Descubre el mundo</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
+
 <body>
 
-<div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
 
-<!-- HERO -->
-<section class="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-        <div class="hero-badge">
-            <i class="fas fa-globe"></i> Plataforma global de turismo
-        </div>
-        <h1 class="hero-title">
-            Tu próxima aventura<br/>empieza con <em>TourPath</em>
-        </h1>
-        <p class="hero-subtitle">
-            Explora ciudades de todo el mundo, descubre lugares únicos,
-            reserva experiencias auténticas y apoya a los negocios locales.
-        </p>
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-globe"></i> Plataforma global de turismo
+            </div>
+            <h1 class="hero-title">
+                Tu próxima aventura<br />empieza con <em>TourPath</em>
+            </h1>
+            <p class="hero-subtitle">
+                Explora ciudades de todo el mundo, descubre lugares únicos,
+                reserva experiencias auténticas y apoya a los negocios locales.
+            </p>
 
-        <!-- Buscador de ciudades -->
-        <form th:action="@{/explore}" method="get">
-            <div class="city-search">
-                <i class="fas fa-search" style="color:var(--gray-400);"></i>
-                <input type="text" name="q" placeholder="¿A qué ciudad quieres viajar?" autocomplete="off"/>
-                <button type="submit" class="city-search-btn">
-                    <i class="fas fa-paper-plane"></i> Explorar
-                </button>
-            </div>
-        </form>
-
-        <div class="hero-stats">
-            <div class="hero-stat">
-                <strong th:text="${totalCities}">0</strong>
-                <span>Ciudades</span>
-            </div>
-            <div class="hero-stat">
-                <strong th:text="${totalPlaces}">0</strong>
-                <span>Lugares</span>
-            </div>
-            <div class="hero-stat">
-                <strong>100%</strong>
-                <span>Verificados</span>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- CIUDADES DESTACADAS -->
-<section class="section" th:if="${!featuredCities.isEmpty()}">
-    <div class="container">
-        <div class="section-header">
-            <span class="section-badge">🌍 Destinos top</span>
-            <h2 class="section-title">Ciudades Destacadas</h2>
-            <p class="section-subtitle">Los destinos más populares de nuestra plataforma con miles de experiencias verificadas</p>
-        </div>
-        <div class="cities-grid">
-            <a th:each="city : ${featuredCities}"
-               th:href="@{/city/{id}(id=${city.id})}"
-               class="city-card">
-                <img th:src="${city.mainImage}" th:alt="${city.name}" class="city-card-image" loading="lazy"/>
-                <div class="city-card-overlay"></div>
-                <span th:if="${city.featured}" class="city-card-featured">⭐ Destacado</span>
-                <span th:if="${city.totalPlaces > 0}" class="city-card-places"
-                      th:text="${city.totalPlaces + ' lugares'}"></span>
-                <div class="city-card-body">
-                    <div class="city-card-flag" th:text="${city.flagEmoji}">🌍</div>
-                    <div class="city-card-name" th:text="${city.name}">Ciudad</div>
-                    <div class="city-card-country" th:text="${city.country}">País</div>
+            <!-- Buscador de ciudades -->
+            <form th:action="@{/explore}" method="get">
+                <div class="city-search">
+                    <i class="fas fa-search" style="color:var(--gray-400);"></i>
+                    <input type="text" name="q" placeholder="¿A qué ciudad quieres viajar?" autocomplete="off" />
+                    <button type="submit" class="city-search-btn">
+                        <i class="fas fa-paper-plane"></i> Explorar
+                    </button>
                 </div>
-            </a>
-        </div>
-        <div style="text-align:center; margin-top:36px;">
-            <a th:href="@{/explore}" class="btn btn-blue btn-lg">
-                <i class="fas fa-globe"></i> Ver todas las ciudades
-            </a>
-        </div>
-    </div>
-</section>
+            </form>
 
-<!-- LUGARES DESTACADOS -->
-<section class="section section-alt" th:if="${!featuredPlaces.isEmpty()}">
-    <div class="container">
-        <div class="section-header">
-            <span class="section-badge">⭐ Los mejores</span>
-            <h2 class="section-title">Lugares Destacados</h2>
-            <p class="section-subtitle">Establecimientos y sitios verificados con las mejores calificaciones del mundo</p>
-        </div>
-        <div class="places-grid">
-            <div th:each="place : ${featuredPlaces}" class="place-card">
-                <div class="place-card-img-wrap">
-                    <img th:src="${place.mainImage != null ? place.mainImage : 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600'}"
-                         th:alt="${place.name}" class="place-card-img" loading="lazy"/>
-                    <span class="badge-cat" th:text="${place.category.emoji + ' ' + place.category.displayName}"></span>
-                    <span th:if="${place.featured}" class="badge-featured">⭐ Top</span>
-                    <span th:if="${place.priceRange}" class="badge-price" th:text="${place.priceRange}"></span>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <strong th:text="${totalCities}">0</strong>
+                    <span>Ciudades</span>
                 </div>
-                <div class="place-card-body">
-                    <div class="place-card-city">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span th:text="${place.cityName + ', ' + place.countryName}"></span>
+                <div class="hero-stat">
+                    <strong th:text="${totalPlaces}">0</strong>
+                    <span>Lugares</span>
+                </div>
+                <div class="hero-stat">
+                    <strong>100%</strong>
+                    <span>Verificados</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CIUDADES DESTACADAS -->
+    <section class="section" th:if="${!featuredCities.isEmpty()}">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">🌍 Destinos top</span>
+                <h2 class="section-title">Ciudades Destacadas</h2>
+                <p class="section-subtitle">Los destinos más populares de nuestra plataforma con miles de experiencias
+                    verificadas</p>
+            </div>
+            <div class="cities-grid">
+                <a th:each="city : ${featuredCities}" th:href="@{/city/{id}(id=${city.id})}" class="city-card">
+                    <img th:src="${city.mainImage}" th:alt="${city.name}" class="city-card-image" loading="lazy" />
+                    <div class="city-card-overlay"></div>
+                    <span th:if="${city.featured}" class="city-card-featured">⭐ Destacado</span>
+                    <span th:if="${city.totalPlaces > 0}" class="city-card-places"
+                        th:text="${city.totalPlaces + ' lugares'}"></span>
+                    <div class="city-card-body">
+                        <div class="city-card-flag" th:text="${city.flagEmoji}">🌍</div>
+                        <div class="city-card-name" th:text="${city.name}">Ciudad</div>
+                        <div class="city-card-country" th:text="${city.country}">País</div>
                     </div>
-                    <h3 class="place-card-name" th:text="${place.name}">Nombre</h3>
-                    <p class="place-card-desc" th:text="${#strings.abbreviate(place.description, 90)}"></p>
-                    <div class="place-card-footer">
-                        <div class="rating" th:if="${place.totalReviews > 0}">
-                            <span class="rating-star">★</span>
-                            <strong th:text="${#numbers.formatDecimal(place.averageRating,1,1)}">4.5</strong>
-                            <span class="rating-count" th:text="'(' + ${place.totalReviews} + ')'"></span>
+                </a>
+            </div>
+            <div style="text-align:center; margin-top:36px;">
+                <a th:href="@{/explore}" class="btn btn-blue btn-lg">
+                    <i class="fas fa-globe"></i> Ver todas las ciudades
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- LUGARES DESTACADOS -->
+    <section class="section section-alt" th:if="${!featuredPlaces.isEmpty()}">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">⭐ Los mejores</span>
+                <h2 class="section-title">Lugares Destacados</h2>
+                <p class="section-subtitle">Establecimientos y sitios verificados con las mejores calificaciones del
+                    mundo</p>
+            </div>
+            <div class="places-grid">
+                <div th:each="place : ${featuredPlaces}" class="place-card">
+                    <div class="place-card-img-wrap">
+                        <img th:src="${place.mainImage != null ? place.mainImage : 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600'}"
+                            th:alt="${place.name}" class="place-card-img" loading="lazy" />
+                        <span class="badge-cat"
+                            th:text="${place.category.emoji + ' ' + place.category.displayName}"></span>
+                        <span th:if="${place.featured}" class="badge-featured">⭐ Top</span>
+                        <span th:if="${place.priceRange}" class="badge-price" th:text="${place.priceRange}"></span>
+                    </div>
+                    <div class="place-card-body">
+                        <div class="place-card-city">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span th:text="${place.cityName + ', ' + place.countryName}"></span>
                         </div>
-                        <div class="rating" th:unless="${place.totalReviews > 0}">
-                            <span style="font-size:.78rem; color:var(--gray-400);">Nuevo</span>
+                        <h3 class="place-card-name" th:text="${place.name}">Nombre</h3>
+                        <p class="place-card-desc" th:text="${#strings.abbreviate(place.description, 90)}"></p>
+                        <div class="place-card-footer">
+                            <div class="rating" th:if="${place.totalReviews > 0}">
+                                <span class="rating-star">★</span>
+                                <strong th:text="${#numbers.formatDecimal(place.averageRating,1,1)}">4.5</strong>
+                                <span class="rating-count" th:text="'(' + ${place.totalReviews} + ')'"></span>
+                            </div>
+                            <div class="rating" th:unless="${place.totalReviews > 0}">
+                                <span style="font-size:.78rem; color:var(--gray-400);">Nuevo</span>
+                            </div>
+                            <a th:href="@{/places/{id}(id=${place.id})}" class="btn-see">Ver más</a>
                         </div>
-                        <a th:href="@{/places/{id}(id=${place.id})}" class="btn-see">Ver más</a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- CÓMO FUNCIONA -->
-<section class="section">
-    <div class="container">
-        <div class="section-header">
-            <span class="section-badge">💡 Simple y rápido</span>
-            <h2 class="section-title">¿Cómo funciona TourPath?</h2>
+    <!-- CÓMO FUNCIONA -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">💡 Simple y rápido</span>
+                <h2 class="section-title">¿Cómo funciona TourPath?</h2>
+            </div>
+            <div
+                style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:28px; margin-top:16px;">
+                <div style="text-align:center; padding:32px 20px;">
+                    <div
+                        style="width:64px; height:64px; background:linear-gradient(135deg,#1a3c5e,#2563a8); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:0 auto 18px;">
+                        🌍</div>
+                    <h3 style="font-size:1.1rem; color:var(--primary-dark); margin-bottom:8px;">1. Elige tu ciudad</h3>
+                    <p style="font-size:.88rem; color:var(--gray-600); line-height:1.6;">Busca cualquier ciudad del
+                        mundo y obtén toda la información al instante.</p>
+                </div>
+                <div style="text-align:center; padding:32px 20px;">
+                    <div
+                        style="width:64px; height:64px; background:linear-gradient(135deg,#f97316,#ea6a00); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:0 auto 18px;">
+                        🔍</div>
+                    <h3 style="font-size:1.1rem; color:var(--primary-dark); margin-bottom:8px;">2. Explora lugares</h3>
+                    <p style="font-size:.88rem; color:var(--gray-600); line-height:1.6;">Filtra por categoría —
+                        restaurantes, playas, museos, vida nocturna y más.</p>
+                </div>
+                <div style="text-align:center; padding:32px 20px;">
+                    <div
+                        style="width:64px; height:64px; background:linear-gradient(135deg,#16a34a,#0f7430); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:0 auto 18px;">
+                        📅</div>
+                    <h3 style="font-size:1.1rem; color:var(--primary-dark); margin-bottom:8px;">3. Reserva directamente
+                    </h3>
+                    <p style="font-size:.88rem; color:var(--gray-600); line-height:1.6;">Haz clic en "Reservar" y
+                        conecta directo con el establecimiento en segundos.</p>
+                </div>
+                <div style="text-align:center; padding:32px 20px;">
+                    <div
+                        style="width:64px; height:64px; background:linear-gradient(135deg,#0ea5e9,#0369a1); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:0 auto 18px;">
+                        ⭐</div>
+                    <h3 style="font-size:1.1rem; color:var(--primary-dark); margin-bottom:8px;">4. Comparte tu
+                        experiencia</h3>
+                    <p style="font-size:.88rem; color:var(--gray-600); line-height:1.6;">Deja tu reseña y ayuda a otros
+                        viajeros a descubrir lo mejor del mundo.</p>
+                </div>
+            </div>
         </div>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:28px; margin-top:16px;">
-            <div style="text-align:center; padding:32px 20px;">
-                <div style="width:64px; height:64px; background:linear-gradient(135deg,#1a3c5e,#2563a8); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:0 auto 18px;">🌍</div>
-                <h3 style="font-size:1.1rem; color:var(--primary-dark); margin-bottom:8px;">1. Elige tu ciudad</h3>
-                <p style="font-size:.88rem; color:var(--gray-600); line-height:1.6;">Busca cualquier ciudad del mundo y obtén toda la información al instante.</p>
-            </div>
-            <div style="text-align:center; padding:32px 20px;">
-                <div style="width:64px; height:64px; background:linear-gradient(135deg,#f97316,#ea6a00); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:0 auto 18px;">🔍</div>
-                <h3 style="font-size:1.1rem; color:var(--primary-dark); margin-bottom:8px;">2. Explora lugares</h3>
-                <p style="font-size:.88rem; color:var(--gray-600); line-height:1.6;">Filtra por categoría — restaurantes, playas, museos, vida nocturna y más.</p>
-            </div>
-            <div style="text-align:center; padding:32px 20px;">
-                <div style="width:64px; height:64px; background:linear-gradient(135deg,#16a34a,#0f7430); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:0 auto 18px;">📅</div>
-                <h3 style="font-size:1.1rem; color:var(--primary-dark); margin-bottom:8px;">3. Reserva directamente</h3>
-                <p style="font-size:.88rem; color:var(--gray-600); line-height:1.6;">Haz clic en "Reservar" y conecta directo con el establecimiento en segundos.</p>
-            </div>
-            <div style="text-align:center; padding:32px 20px;">
-                <div style="width:64px; height:64px; background:linear-gradient(135deg,#0ea5e9,#0369a1); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:0 auto 18px;">⭐</div>
-                <h3 style="font-size:1.1rem; color:var(--primary-dark); margin-bottom:8px;">4. Comparte tu experiencia</h3>
-                <p style="font-size:.88rem; color:var(--gray-600); line-height:1.6;">Deja tu reseña y ayuda a otros viajeros a descubrir lo mejor del mundo.</p>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
 
-<!-- CTA NEGOCIO -->
-<section style="background:linear-gradient(135deg,#0f2540,#1a3c5e,#f97316 200%); padding:80px 0; text-align:center; color:white;">
-    <div class="container">
-        <h2 style="font-size:clamp(1.8rem,4vw,2.8rem); margin-bottom:14px;">¿Tienes un negocio turístico?</h2>
-        <p style="color:rgba(255,255,255,.75); font-size:1.05rem; max-width:560px; margin:0 auto 32px;">
-            Registra tu establecimiento en TourPath y llega a miles de turistas de todo el mundo.
-            Proceso 100% gratuito, verificado por nuestro equipo.
-        </p>
-        <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
-            <a th:href="@{/business/register}" class="btn btn-primary btn-lg">
-                <i class="fas fa-store"></i> Registrar mi negocio
-            </a>
-            <a th:href="@{/explore}" class="btn btn-outline-white btn-lg">
-                <i class="fas fa-globe"></i> Explorar ciudades
-            </a>
+    <!-- CTA NEGOCIO -->
+    <section
+        style="background:linear-gradient(135deg,#0f2540,#1a3c5e,#f97316 200%); padding:80px 0; text-align:center; color:white;">
+        <div class="container">
+            <h2 style="font-size:clamp(1.8rem,4vw,2.8rem); margin-bottom:14px;">¿Tienes un negocio turístico?</h2>
+            <p style="color:rgba(255,255,255,.75); font-size:1.05rem; max-width:560px; margin:0 auto 32px;">
+                Registra tu establecimiento en TourPath y llega a miles de turistas de todo el mundo.
+                Proceso 100% gratuito, verificado por nuestro equipo.
+            </p>
+            <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+                <a th:href="@{/business/register}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-store"></i> Registrar mi negocio
+                </a>
+                <a th:href="@{/explore}" class="btn btn-outline-white btn-lg">
+                    <i class="fas fa-globe"></i> Explorar ciudades
+                </a>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
 </body>
+
 </html>

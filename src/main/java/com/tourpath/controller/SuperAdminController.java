@@ -18,18 +18,23 @@ import java.util.Set;
 @PreAuthorize("hasRole('SUPER_ADMIN')")
 public class SuperAdminController {
 
-    @Autowired private PlaceService placeService;
-    @Autowired private CityService cityService;
-    @Autowired private UserService userService;
-    @Autowired private ReviewService reviewService;
-    @Autowired private BusinessRequestService businessRequestService;
+    @Autowired
+    private PlaceService placeService;
+    @Autowired
+    private CityService cityService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ReviewService reviewService;
+    @Autowired
+    private BusinessRequestService businessRequestService;
 
     // ── Dashboard ─────────────────────────────────────────────────
-    @GetMapping({"/", "/dashboard"})
+    @GetMapping({ "/", "/dashboard" })
     public String dashboard(Model model) {
-        model.addAttribute("totalPlaces",   placeService.getTotalActivePlaces());
-        model.addAttribute("totalCities",   cityService.countCities());
-        model.addAttribute("totalUsers",    userService.countUsers());
+        model.addAttribute("totalPlaces", placeService.getTotalActivePlaces());
+        model.addAttribute("totalCities", cityService.countCities());
+        model.addAttribute("totalUsers", userService.countUsers());
         model.addAttribute("pendingRequests", businessRequestService.countPending());
         model.addAttribute("featuredPlaces", placeService.getTotalFeaturedPlaces());
         model.addAttribute("statsByCategory", placeService.getStatsByCategory());
@@ -61,8 +66,8 @@ public class SuperAdminController {
 
     @PostMapping("/requests/{id}/approve")
     public String approveRequest(@PathVariable String id,
-                                 Authentication auth,
-                                 RedirectAttributes ra) {
+            Authentication auth,
+            RedirectAttributes ra) {
         businessRequestService.approveRequest(id, auth.getName());
         ra.addFlashAttribute("success", "✅ Solicitud aprobada. Establecimiento creado.");
         return "redirect:/superadmin/requests";
@@ -70,9 +75,9 @@ public class SuperAdminController {
 
     @PostMapping("/requests/{id}/reject")
     public String rejectRequest(@PathVariable String id,
-                                @RequestParam String reason,
-                                Authentication auth,
-                                RedirectAttributes ra) {
+            @RequestParam String reason,
+            Authentication auth,
+            RedirectAttributes ra) {
         businessRequestService.rejectRequest(id, reason, auth.getName());
         ra.addFlashAttribute("success", "Solicitud rechazada.");
         return "redirect:/superadmin/requests";
@@ -94,10 +99,13 @@ public class SuperAdminController {
 
     @PostMapping("/cities/new")
     public String createCity(@Valid @ModelAttribute("city") City city,
-                             BindingResult result,
-                             Model model,
-                             RedirectAttributes ra) {
-        if (result.hasErrors()) { model.addAttribute("action", "Crear"); return "admin/city-form"; }
+            BindingResult result,
+            Model model,
+            RedirectAttributes ra) {
+        if (result.hasErrors()) {
+            model.addAttribute("action", "Crear");
+            return "admin/city-form";
+        }
         city.setActive(true);
         cityService.saveCity(city);
         ra.addFlashAttribute("success", "✅ Ciudad creada.");
@@ -114,11 +122,14 @@ public class SuperAdminController {
 
     @PostMapping("/cities/{id}/edit")
     public String updateCity(@PathVariable String id,
-                             @Valid @ModelAttribute("city") City city,
-                             BindingResult result,
-                             Model model,
-                             RedirectAttributes ra) {
-        if (result.hasErrors()) { model.addAttribute("action", "Editar"); return "admin/city-form"; }
+            @Valid @ModelAttribute("city") City city,
+            BindingResult result,
+            Model model,
+            RedirectAttributes ra) {
+        if (result.hasErrors()) {
+            model.addAttribute("action", "Editar");
+            return "admin/city-form";
+        }
         city.setId(id);
         cityService.saveCity(city);
         ra.addFlashAttribute("success", "✅ Ciudad actualizada.");
@@ -150,9 +161,9 @@ public class SuperAdminController {
 
     @PostMapping("/places/new")
     public String createPlace(@Valid @ModelAttribute("place") Place place,
-                              BindingResult result,
-                              Model model,
-                              RedirectAttributes ra) {
+            BindingResult result,
+            Model model,
+            RedirectAttributes ra) {
         if (result.hasErrors()) {
             model.addAttribute("cities", cityService.getAllActiveCities());
             model.addAttribute("categories", Place.Category.values());
@@ -180,10 +191,10 @@ public class SuperAdminController {
 
     @PostMapping("/places/{id}/edit")
     public String updatePlace(@PathVariable String id,
-                              @Valid @ModelAttribute("place") Place place,
-                              BindingResult result,
-                              Model model,
-                              RedirectAttributes ra) {
+            @Valid @ModelAttribute("place") Place place,
+            BindingResult result,
+            Model model,
+            RedirectAttributes ra) {
         if (result.hasErrors()) {
             model.addAttribute("cities", cityService.getAllActiveCities());
             model.addAttribute("categories", Place.Category.values());

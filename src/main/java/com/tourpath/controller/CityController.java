@@ -15,14 +15,16 @@ import java.util.List;
 @RequestMapping("/city")
 public class CityController {
 
-    @Autowired private CityService cityService;
-    @Autowired private PlaceService placeService;
+    @Autowired
+    private CityService cityService;
+    @Autowired
+    private PlaceService placeService;
 
     /** Página principal de una ciudad con todos sus lugares */
     @GetMapping("/{id}")
     public String cityDetail(@PathVariable String id,
-                             @RequestParam(required = false) String category,
-                             Model model) {
+            @RequestParam(required = false) String category,
+            Model model) {
         City city = cityService.getCityById(id)
                 .orElseThrow(() -> new RuntimeException("Ciudad no encontrada"));
 

@@ -1,113 +1,125 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="${city.name + ' | TourPath'}">Ciudad</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
+
 <body>
-<div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
 
-<!-- Hero de la ciudad -->
-<div class="detail-hero">
-    <img th:src="${city.mainImage}" th:alt="${city.name}"/>
-    <div class="detail-hero-overlay"></div>
-    <div class="container" style="position:relative; z-index:2; height:100%; display:flex; flex-direction:column; justify-content:flex-end; padding-bottom:32px;">
-        <div class="detail-breadcrumb">
-            <a th:href="@{/explore}">Explorar</a> →
-            <span th:text="${city.continent}">Continente</span> →
-            <span th:text="${city.name}">Ciudad</span>
-        </div>
-        <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
-            <span style="font-size:2.5rem;" th:text="${city.flagEmoji}">🌍</span>
-            <div>
-                <h1 class="detail-title" th:text="${city.name}">Ciudad</h1>
-                <div class="detail-meta">
-                    <div class="detail-meta-item"><i class="fas fa-globe"></i><span th:text="${city.country}"></span></div>
-                    <div class="detail-meta-item"><i class="fas fa-map"></i><span th:text="${city.continent}"></span></div>
-                    <div class="detail-meta-item" th:if="${city.totalPlaces > 0}">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span th:text="${city.totalPlaces + ' lugares'}"></span>
+    <!-- Hero de la ciudad -->
+    <div class="detail-hero">
+        <img th:src="${city.mainImage}" th:alt="${city.name}" />
+        <div class="detail-hero-overlay"></div>
+        <div class="container"
+            style="position:relative; z-index:2; height:100%; display:flex; flex-direction:column; justify-content:flex-end; padding-bottom:32px;">
+            <div class="detail-breadcrumb">
+                <a th:href="@{/explore}">Explorar</a> →
+                <span th:text="${city.continent}">Continente</span> →
+                <span th:text="${city.name}">Ciudad</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
+                <span style="font-size:2.5rem;" th:text="${city.flagEmoji}">🌍</span>
+                <div>
+                    <h1 class="detail-title" th:text="${city.name}">Ciudad</h1>
+                    <div class="detail-meta">
+                        <div class="detail-meta-item"><i class="fas fa-globe"></i><span
+                                th:text="${city.country}"></span></div>
+                        <div class="detail-meta-item"><i class="fas fa-map"></i><span
+                                th:text="${city.continent}"></span></div>
+                        <div class="detail-meta-item" th:if="${city.totalPlaces > 0}">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span th:text="${city.totalPlaces + ' lugares'}"></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<section class="section">
-    <div class="container">
-        <!-- Descripción de la ciudad -->
-        <div style="background:white; border-radius:var(--radius); padding:28px; box-shadow:var(--shadow); margin-bottom:32px; border:1px solid var(--gray-200);">
-            <h2 style="font-size:1.3rem; color:var(--primary-dark); margin-bottom:12px;">Sobre <span th:text="${city.name}">Ciudad</span></h2>
-            <p style="color:var(--gray-600); line-height:1.8;" th:text="${city.description}">Descripción</p>
-            <div class="tags-wrap" th:if="${city.tags != null and !city.tags.isEmpty()}">
-                <span th:each="tag : ${city.tags}" class="tag" th:text="${'#' + tag}"></span>
-            </div>
-        </div>
-
-        <!-- Filtros de categoría -->
-        <div class="filter-bar">
-            <a th:href="@{/city/{id}(id=${city.id})}"
-               th:classappend="${selectedCategory == null} ? ' active' : ''"
-               class="filter-chip">🌐 Todos</a>
-            <a th:each="cat : ${categories}"
-               th:href="@{/city/{id}(id=${city.id}, category=${cat.toString()})}"
-               th:classappend="${selectedCategory != null and selectedCategory.toString() == cat.toString()} ? ' active' : ''"
-               th:text="${cat.emoji + ' ' + cat.displayName}"
-               class="filter-chip"></a>
-        </div>
-
-        <!-- Lugares de la ciudad -->
-        <div th:if="${places.isEmpty()}" class="empty-state">
-            <div class="empty-icon">🏙️</div>
-            <h3>Aún no hay lugares en esta categoría</h3>
-            <p>¿Tienes un establecimiento aquí? ¡Regístralo!</p>
-            <a th:href="@{/business/register}" class="btn btn-primary">Registrar mi negocio</a>
-        </div>
-
-        <div th:unless="${places.isEmpty()}" class="places-grid">
-            <div th:each="place : ${places}" class="place-card">
-                <div class="place-card-img-wrap">
-                    <img th:src="${place.mainImage != null ? place.mainImage : 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600'}"
-                         th:alt="${place.name}" class="place-card-img" loading="lazy"/>
-                    <span class="badge-cat" th:text="${place.category.emoji + ' ' + place.category.displayName}"></span>
-                    <span th:if="${place.featured}" class="badge-featured">⭐ Top</span>
-                    <span th:if="${place.priceRange}" class="badge-price" th:text="${place.priceRange}"></span>
+    <section class="section">
+        <div class="container">
+            <!-- Descripción de la ciudad -->
+            <div
+                style="background:white; border-radius:var(--radius); padding:28px; box-shadow:var(--shadow); margin-bottom:32px; border:1px solid var(--gray-200);">
+                <h2 style="font-size:1.3rem; color:var(--primary-dark); margin-bottom:12px;">Sobre <span
+                        th:text="${city.name}">Ciudad</span></h2>
+                <p style="color:var(--gray-600); line-height:1.8;" th:text="${city.description}">Descripción</p>
+                <div class="tags-wrap" th:if="${city.tags != null and !city.tags.isEmpty()}">
+                    <span th:each="tag : ${city.tags}" class="tag" th:text="${'#' + tag}"></span>
                 </div>
-                <div class="place-card-body">
-                    <h3 class="place-card-name" th:text="${place.name}">Nombre</h3>
-                    <p class="place-card-desc" th:text="${#strings.abbreviate(place.description, 90)}"></p>
-                    <div class="place-card-footer">
-                        <div class="rating" th:if="${place.totalReviews > 0}">
-                            <span class="rating-star">★</span>
-                            <strong th:text="${#numbers.formatDecimal(place.averageRating,1,1)}">4.5</strong>
-                            <span class="rating-count" th:text="'(' + ${place.totalReviews} + ')'"></span>
+            </div>
+
+            <!-- Filtros de categoría -->
+            <div class="filter-bar">
+                <a th:href="@{/city/{id}(id=${city.id})}" th:classappend="${selectedCategory == null} ? ' active' : ''"
+                    class="filter-chip">🌐 Todos</a>
+                <a th:each="cat : ${categories}" th:href="@{/city/{id}(id=${city.id}, category=${cat.toString()})}"
+                    th:classappend="${selectedCategory != null and selectedCategory.toString() == cat.toString()} ? ' active' : ''"
+                    th:text="${cat.emoji + ' ' + cat.displayName}" class="filter-chip"></a>
+            </div>
+
+            <!-- Lugares de la ciudad -->
+            <div th:if="${places.isEmpty()}" class="empty-state">
+                <div class="empty-icon">🏙️</div>
+                <h3>Aún no hay lugares en esta categoría</h3>
+                <p>¿Tienes un establecimiento aquí? ¡Regístralo!</p>
+                <a th:href="@{/business/register}" class="btn btn-primary">Registrar mi negocio</a>
+            </div>
+
+            <div th:unless="${places.isEmpty()}" class="places-grid">
+                <div th:each="place : ${places}" class="place-card">
+                    <div class="place-card-img-wrap">
+                        <img th:src="${place.mainImage != null ? place.mainImage : 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600'}"
+                            th:alt="${place.name}" class="place-card-img" loading="lazy" />
+                        <span class="badge-cat"
+                            th:text="${place.category.emoji + ' ' + place.category.displayName}"></span>
+                        <span th:if="${place.featured}" class="badge-featured">⭐ Top</span>
+                        <span th:if="${place.priceRange}" class="badge-price" th:text="${place.priceRange}"></span>
+                    </div>
+                    <div class="place-card-body">
+                        <h3 class="place-card-name" th:text="${place.name}">Nombre</h3>
+                        <p class="place-card-desc" th:text="${#strings.abbreviate(place.description, 90)}"></p>
+                        <div class="place-card-footer">
+                            <div class="rating" th:if="${place.totalReviews > 0}">
+                                <span class="rating-star">★</span>
+                                <strong th:text="${#numbers.formatDecimal(place.averageRating,1,1)}">4.5</strong>
+                                <span class="rating-count" th:text="'(' + ${place.totalReviews} + ')'"></span>
+                            </div>
+                            <div th:unless="${place.totalReviews > 0}">
+                                <span style="font-size:.78rem; color:var(--gray-400);">Nuevo</span>
+                            </div>
+                            <a th:href="@{/places/{id}(id=${place.id})}" class="btn-see">Ver más</a>
                         </div>
-                        <div th:unless="${place.totalReviews > 0}">
-                            <span style="font-size:.78rem; color:var(--gray-400);">Nuevo</span>
-                        </div>
-                        <a th:href="@{/places/{id}(id=${place.id})}" class="btn-see">Ver más</a>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- CTA registrar negocio -->
-        <div style="background:linear-gradient(135deg,var(--primary-dark),var(--primary)); border-radius:var(--radius); padding:36px; text-align:center; color:white; margin-top:48px;">
-            <h3 style="font-size:1.4rem; margin-bottom:10px;">¿Tienes un negocio en <span th:text="${city.name}">esta ciudad</span>?</h3>
-            <p style="color:rgba(255,255,255,.75); margin-bottom:20px;">Regístralo en TourPath y llega a viajeros de todo el mundo.</p>
-            <a th:href="@{/business/register}" class="btn btn-primary">
-                <i class="fas fa-store"></i> Registrar mi establecimiento
-            </a>
+            <!-- CTA registrar negocio -->
+            <div
+                style="background:linear-gradient(135deg,var(--primary-dark),var(--primary)); border-radius:var(--radius); padding:36px; text-align:center; color:white; margin-top:48px;">
+                <h3 style="font-size:1.4rem; margin-bottom:10px;">¿Tienes un negocio en <span
+                        th:text="${city.name}">esta ciudad</span>?</h3>
+                <p style="color:rgba(255,255,255,.75); margin-bottom:20px;">Regístralo en TourPath y llega a viajeros de
+                    todo el mundo.</p>
+                <a th:href="@{/business/register}" class="btn btn-primary">
+                    <i class="fas fa-store"></i> Registrar mi establecimiento
+                </a>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<div th:replace="~{fragments/layout :: footer}"></div>
-<script th:src="@{/js/main.js}"></script>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <script th:src="@{/js/main.js}"></script>
 </body>
+
 </html>
