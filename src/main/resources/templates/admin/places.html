@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Lugares | TourPath Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-wrap"><div class="sidebar-logo">✈️</div><span class="sidebar-brand-name">Tour<span>Path</span></span></div>
+            <div class="sidebar-role">Super Administrador</div>
+        </div>
+        <nav class="sidebar-nav">
+            <a th:href="@{/superadmin/dashboard}" class="sidebar-link"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a th:href="@{/superadmin/requests}"  class="sidebar-link"><i class="fas fa-inbox"></i> Solicitudes</a>
+            <a th:href="@{/superadmin/cities}"    class="sidebar-link"><i class="fas fa-city"></i> Ciudades</a>
+            <a th:href="@{/superadmin/places}"    class="sidebar-link active"><i class="fas fa-map-marker-alt"></i> Lugares</a>
+            <a th:href="@{/superadmin/users}"     class="sidebar-link"><i class="fas fa-users"></i> Usuarios</a>
+            <hr class="sidebar-divider"/>
+            <a th:href="@{/home}" class="sidebar-link"><i class="fas fa-globe"></i> Ver TourPath</a>
+            <a th:href="@{/auth/logout}" class="sidebar-link logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <div class="admin-topbar">
+            <h1 class="admin-page-title">📍 Gestión de Lugares</h1>
+            <a th:href="@{/superadmin/places/new}" class="btn btn-primary"><i class="fas fa-plus"></i> Nuevo lugar</a>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success"><i class="fas fa-check-circle"></i> <span th:text="${success}"></span></div>
+
+        <!-- Filtros: buscador + selector de ciudad -->
+        <div class="admin-section" style="padding:18px 24px; margin-bottom:0; border-radius:14px 14px 0 0; border-bottom:1px solid var(--gray-200,#e2e8f0);">
+            <form th:action="@{/superadmin/places}" method="get" style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end;">
+                <!-- Buscador -->
+                <div style="flex:1; min-width:220px;">
+                    <label style="font-size:.78rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px; display:block; margin-bottom:6px;">
+                        <i class="fas fa-search"></i> Buscar lugar
+                    </label>
+                    <input type="text" name="q" th:value="${query}"
+                           placeholder="Nombre del lugar, descripción..."
+                           style="width:100%; padding:10px 14px; border:2px solid #e2e8f0; border-radius:10px; font-size:.9rem; outline:none; font-family:inherit;"
+                           onfocus="this.style.borderColor='#1a3c5e'" onblur="this.style.borderColor='#e2e8f0'"/>
+                </div>
+
+                <!-- Selector de ciudad -->
+                <div style="flex:1; min-width:220px;">
+                    <label style="font-size:.78rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px; display:block; margin-bottom:6px;">
+                        <i class="fas fa-city"></i> Filtrar por ciudad
+                    </label>
+                    <select name="cityId"
+                            style="width:100%; padding:10px 14px; border:2px solid #e2e8f0; border-radius:10px; font-size:.9rem; outline:none; font-family:inherit; background:white; cursor:pointer;"
+                            onfocus="this.style.borderColor='#1a3c5e'" onblur="this.style.borderColor='#e2e8f0'">
+                        <option value="">🌐 Todas las ciudades</option>
+                        <option th:each="city : ${cities}"
+                                th:value="${city.id}"
+                                th:text="${city.flagEmoji + ' ' + city.name + ', ' + city.country}"
+                                th:selected="${selectedCityId != null and selectedCityId == city.id}">
+                        </option>
+                    </select>
+                </div>
+
+                <div style="display:flex; gap:8px; align-items:flex-end; padding-bottom:1px;">
+                    <button type="submit" class="btn btn-blue" style="height:42px;">
+                        <i class="fas fa-filter"></i> Filtrar
+                    </button>
+                    <a th:href="@{/superadmin/places}" class="btn btn-outline" style="height:42px;" title="Limpiar filtros">
+                        <i class="fas fa-times"></i> Limpiar
+                    </a>
+                </div>
+            </form>
+
+            <!-- Resumen de filtros activos -->
+            <div th:if="${query != null or selectedCityId != null}"
+                 style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                <span style="font-size:.8rem; color:#64748b;">Mostrando:</span>
+                <span th:if="${query != null and !query.isBlank()}"
+                      style="background:#dbeafe; color:#1e40af; padding:3px 10px; border-radius:20px; font-size:.78rem; font-weight:600;">
+                    🔍 "<span th:text="${query}"></span>"
+                </span>
+                <span th:if="${selectedCityId != null and !selectedCityId.isBlank()}"
+                      th:each="city : ${cities}" th:if="${city.id == selectedCityId}"
+                      style="background:#dcfce7; color:#166534; padding:3px 10px; border-radius:20px; font-size:.78rem; font-weight:600;">
+                    📍 <span th:text="${city.flagEmoji + ' ' + city.name}"></span>
+                </span>
+                <span style="font-size:.78rem; color:#94a3b8;" th:text="${places.size() + ' resultado(s)'}"></span>
+            </div>
+        </div>
+
+        <!-- Tabla de lugares -->
+        <div class="admin-section" style="border-radius:0 0 14px 14px; margin-top:0;">
+            <!-- Sin resultados -->
+            <div th:if="${places.isEmpty()}" style="text-align:center; padding:48px 20px; color:#94a3b8;">
+                <div style="font-size:3rem; margin-bottom:12px;">📍</div>
+                <h3 style="font-size:1.1rem; color:#475569; margin-bottom:8px;">No se encontraron lugares</h3>
+                <p style="font-size:.88rem;">Prueba con otra búsqueda o limpia los filtros</p>
+            </div>
+
+            <div class="table-wrap" th:unless="${places.isEmpty()}">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Nombre</th>
+                            <th>Ciudad / País</th>
+                            <th>Categoría</th>
+                            <th>Rating</th>
+                            <th>Reserva</th>
+                            <th>Destacado</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${places}">
+                            <td>
+                                <img th:src="${p.mainImage != null ? p.mainImage : 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=80'}"
+                                     class="table-thumb" loading="lazy"
+                                     style="border-radius:8px; object-fit:cover;"/>
+                            </td>
+                            <td>
+                                <div style="font-weight:700; color:#1a3c5e;" th:text="${p.name}">Nombre</div>
+                                <div th:if="${p.ownerName != null}"
+                                     style="font-size:.75rem; color:#94a3b8; margin-top:2px;">
+                                    <i class="fas fa-user" style="font-size:.7rem;"></i>
+                                    <span th:text="${p.ownerName}"></span>
+                                </div>
+                            </td>
+                            <!-- Ciudad y País -->
+                            <td>
+                                <div style="display:flex; align-items:center; gap:6px;">
+                                    <span style="font-size:1rem;"
+                                          th:each="city : ${cities}"
+                                          th:if="${city.id == p.cityId}"
+                                          th:text="${city.flagEmoji}">🌍</span>
+                                    <div>
+                                        <div style="font-weight:600; font-size:.88rem; color:#1e293b;"
+                                             th:text="${p.cityName != null ? p.cityName : '-'}">Ciudad</div>
+                                        <div style="font-size:.75rem; color:#94a3b8;"
+                                             th:text="${p.countryName != null ? p.countryName : '-'}">País</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge badge-cat"
+                                      th:text="${p.category.emoji + ' ' + p.category.displayName}"></span>
+                            </td>
+                            <td>
+                                <div style="display:flex; align-items:center; gap:4px;">
+                                    <span style="color:#f59e0b; font-size:.9rem;">★</span>
+                                    <span style="font-weight:600; font-size:.88rem;"
+                                          th:text="${#numbers.formatDecimal(p.averageRating,1,1)}">0.0</span>
+                                    <span style="font-size:.75rem; color:#94a3b8;"
+                                          th:text="'(' + ${p.totalReviews} + ')'"></span>
+                                </div>
+                            </td>
+                            <!-- Tiene link de reserva? -->
+                            <td>
+                                <span th:if="${p.bookingUrl != null and !p.bookingUrl.isBlank()}"
+                                      style="background:#dcfce7; color:#16a34a; padding:3px 8px; border-radius:20px; font-size:.72rem; font-weight:700;">
+                                    ✅ Sí
+                                </span>
+                                <span th:unless="${p.bookingUrl != null and !p.bookingUrl.isBlank()}"
+                                      style="background:#f1f5f9; color:#94a3b8; padding:3px 8px; border-radius:20px; font-size:.72rem;">
+                                    —
+                                </span>
+                            </td>
+                            <td>
+                                <form th:action="@{/superadmin/places/{id}/featured(id=${p.id})}" method="post" style="display:inline;">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button type="submit"
+                                            th:style="${p.featured} ? 'background:#fef9c3; color:#854d0e; border:none; border-radius:20px; padding:3px 10px; font-size:.75rem; font-weight:700; cursor:pointer;' : 'background:#f1f5f9; color:#94a3b8; border:none; border-radius:20px; padding:3px 10px; font-size:.75rem; cursor:pointer;'"
+                                            th:text="${p.featured} ? '⭐ Sí' : '☆ No'">No</button>
+                                </form>
+                            </td>
+                            <td>
+                                <span th:classappend="${p.active} ? 'badge-active' : 'badge-inactive'"
+                                      class="badge"
+                                      th:text="${p.active ? 'Activo' : 'Inactivo'}"></span>
+                            </td>
+                            <td class="actions-cell">
+                                <a th:href="@{/superadmin/places/{id}/edit(id=${p.id})}"
+                                   class="action-btn edit" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a th:href="@{/places/{id}(id=${p.id})}" target="_blank"
+                                   class="action-btn view" title="Ver en la plataforma">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <form th:action="@{/superadmin/places/{id}/toggle(id=${p.id})}" method="post" style="display:inline;">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button type="submit" class="action-btn toggle" title="Activar/Desactivar">
+                                        <i class="fas fa-eye-slash"></i>
+                                    </button>
+                                </form>
+                                <form th:action="@{/superadmin/places/{id}/delete(id=${p.id})}" method="post"
+                                      style="display:inline;" onsubmit="return confirm('¿Eliminar este lugar?')">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button type="submit" class="action-btn delete" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
