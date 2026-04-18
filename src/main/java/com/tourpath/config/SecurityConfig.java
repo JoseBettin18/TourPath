@@ -69,6 +69,7 @@ public class SecurityConfig {
             .logout(logout -> logout
                 .logoutUrl("/auth/logout")
                 .logoutSuccessUrl("/auth/login?logout=true")
+                .logoutSuccessUrl("/home")
                 .deleteCookies("tp_token", "JSESSIONID")
                 .clearAuthentication(true)
                 .invalidateHttpSession(true)
