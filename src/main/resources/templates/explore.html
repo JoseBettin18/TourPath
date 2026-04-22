@@ -33,25 +33,6 @@
 
     <section class="section">
         <div class="container">
-            <!-- Filtros por continente -->
-            <div class="filter-bar">
-                <a th:href="@{/explore}"
-                    th:classappend="${selectedContinent == null and selectedCountry == null and query == null} ? ' active' : ''"
-                    class="filter-chip">🌐 Todos</a>
-                <a th:href="@{/explore(continent='Europa')}"
-                    th:classappend="${selectedContinent == 'Europa'} ? ' active' : ''" class="filter-chip">🇪🇺
-                    Europa</a>
-                <a th:href="@{/explore(continent='América del Sur')}"
-                    th:classappend="${selectedContinent == 'América del Sur'} ? ' active' : ''" class="filter-chip">🌎
-                    América del Sur</a>
-                <a th:href="@{/explore(continent='América del Norte')}"
-                    th:classappend="${selectedContinent == 'América del Norte'} ? ' active' : ''" class="filter-chip">🗽
-                    América del Norte</a>
-                <a th:href="@{/explore(continent='Asia')}"
-                    th:classappend="${selectedContinent == 'Asia'} ? ' active' : ''" class="filter-chip">🌏 Asia</a>
-                <a th:href="@{/explore(continent='África')}"
-                    th:classappend="${selectedContinent == 'África'} ? ' active' : ''" class="filter-chip">🌍 África</a>
-            </div>
 
             <!-- Resultados -->
             <div th:if="${query != null}" style="margin-bottom:20px; font-size:.95rem; color:var(--gray-600);">
