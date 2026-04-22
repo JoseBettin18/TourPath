@@ -23,13 +23,13 @@
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <div class="hero-badge">
-                <i class="fas fa-globe"></i> Plataforma global de turismo
+                <i class="fas fa-globe"></i> Plataforma nacional de turismo
             </div>
             <h1 class="hero-title">
                 Tu próxima aventura<br />empieza con <em>TourPath</em>
             </h1>
             <p class="hero-subtitle">
-                Explora ciudades de todo el mundo, descubre lugares únicos,
+                Explora ciudades de toda Colombia, descubre lugares únicos,
                 reserva experiencias auténticas y apoya a los negocios locales.
             </p>
 
@@ -65,7 +65,7 @@
     <section class="section" th:if="${!featuredCities.isEmpty()}">
         <div class="container">
             <div class="section-header">
-                <span class="section-badge">🌍 Destinos top</span>
+                <span class="section-badge">Destinos top</span>
                 <h2 class="section-title">Ciudades Destacadas</h2>
                 <p class="section-subtitle">Los destinos más populares de nuestra plataforma con miles de experiencias
                     verificadas</p>
@@ -74,11 +74,11 @@
                 <a th:each="city : ${featuredCities}" th:href="@{/city/{id}(id=${city.id})}" class="city-card">
                     <img th:src="${city.mainImage}" th:alt="${city.name}" class="city-card-image" loading="lazy" />
                     <div class="city-card-overlay"></div>
-                    <span th:if="${city.featured}" class="city-card-featured">⭐ Destacado</span>
+                    <span th:if="${city.featured}" class="city-card-featured"> Destacado</span>
                     <span th:if="${city.totalPlaces > 0}" class="city-card-places"
                         th:text="${city.totalPlaces + ' lugares'}"></span>
                     <div class="city-card-body">
-                        <div class="city-card-flag" th:text="${city.flagEmoji}">🌍</div>
+                        <div class="city-card-flag" th:text="${city.flagEmoji}"></div>
                         <div class="city-card-name" th:text="${city.name}">Ciudad</div>
                         <div class="city-card-country" th:text="${city.country}">País</div>
                     </div>
@@ -96,7 +96,7 @@
     <section class="section section-alt" th:if="${!featuredPlaces.isEmpty()}">
         <div class="container">
             <div class="section-header">
-                <span class="section-badge">⭐ Los mejores</span>
+                <span class="section-badge"> Los mejores</span>
                 <h2 class="section-title">Lugares Destacados</h2>
                 <p class="section-subtitle">Establecimientos y sitios verificados con las mejores calificaciones del
                     mundo</p>
@@ -139,7 +139,7 @@
     <section class="section">
         <div class="container">
             <div class="section-header">
-                <span class="section-badge">💡 Simple y rápido</span>
+                <span class="section-badge"> Simple y rápido</span>
                 <h2 class="section-title">¿Cómo funciona TourPath?</h2>
             </div>
             <div
@@ -149,8 +149,7 @@
                         style="width:64px; height:64px; background:linear-gradient(135deg,#1a3c5e,#2563a8); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:0 auto 18px;">
                         🌍</div>
                     <h3 style="font-size:1.1rem; color:var(--primary-dark); margin-bottom:8px;">1. Elige tu ciudad</h3>
-                    <p style="font-size:.88rem; color:var(--gray-600); line-height:1.6;">Busca cualquier ciudad del
-                        mundo y obtén toda la información al instante.</p>
+                    <p style="font-size:.88rem; color:var(--gray-600); line-height:1.6;">Busca cualquier ciudad de Colombia y obtén toda la información al instante.</p>
                 </div>
                 <div style="text-align:center; padding:32px 20px;">
                     <div
@@ -176,7 +175,7 @@
                     <h3 style="font-size:1.1rem; color:var(--primary-dark); margin-bottom:8px;">4. Comparte tu
                         experiencia</h3>
                     <p style="font-size:.88rem; color:var(--gray-600); line-height:1.6;">Deja tu reseña y ayuda a otros
-                        viajeros a descubrir lo mejor del mundo.</p>
+                        viajeros a descubrir lo mejor del Pais.</p>
                 </div>
             </div>
         </div>
